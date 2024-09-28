@@ -1,16 +1,31 @@
-import { useState } from 'react'
-
+import Home from "./page/Home";
+import ProductPage from "./page/ProductDetail";
+import Navbar from "./components/NavBar";
+import { BrowserRouter as Router, Routes, Route, ScrollRestoration  } from 'react-router-dom';
+import Footer from "./components/Footer";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-    <div className="bg-blue-500 text-white p-4">
-      <h1>Hello, Tailwind is working!</h1>
-    </div>
+      <div className="flex flex-col min-h-screen">
+        <Router>
+          <div className="flex-grow">
+            <main>
+              <Navbar />
+                <Routes>
+                  {/* Ruta para la Home Page */}
+                  <Route path="/" element={<Home />} />
+                  {/* Ruta para la página de detalles del producto */}
+                  <Route path="/product/:id" element={<ProductPage />} />
+                </Routes>
+              <Footer/>
+            </main>
+          </div>
+
+        </Router>
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
