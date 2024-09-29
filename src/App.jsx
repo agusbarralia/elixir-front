@@ -1,16 +1,29 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Home from "./page/Home";
 import ProductPage from "./page/ProductDetail";
 import Navbar from "./components/NavBar";
-import { BrowserRouter as Router, Routes, Route, ScrollRestoration  } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom';
 import Footer from "./components/Footer";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);  // Restablece el scroll a la parte superior
+  }, [pathname]);  // El efecto se activa cada vez que el pathname cambia
+
+  return null;
+}
+
 
 function App() {
   return (
     <>
       <div className="flex flex-col min-h-screen">
         <Router>
+        <ScrollToTop /> {/* Esto restablecerá el scroll cuando cambie la ruta */}
           <div className="flex-grow">
-            <main>
               <Navbar />
                 <Routes>
                   {/* Ruta para la Home Page */}
@@ -19,9 +32,7 @@ function App() {
                   <Route path="/product/:id" element={<ProductPage />} />
                 </Routes>
               <Footer/>
-            </main>
           </div>
-
         </Router>
       </div>
     </>
