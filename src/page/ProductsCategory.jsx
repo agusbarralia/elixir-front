@@ -11,15 +11,17 @@ function ProductsCategory() {
     { id: 4, image: '/trumpeter.png', title: 'Licor Recomendado', price: 1500, category:"licores"},
     { id: 5, image: '/trumpeter.png', title: 'Vodka Recomendado', price: 1500, category:"vodkas"},
     { id: 6, image: '/trumpeter.png', title: 'Vodka Recomendado', price: 1500, category:"vodkas"}
-    // Puedes agregar más productos aquí
   ];
 
   const filteredProducts = products.filter(product => product.category === category);
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
 
   return (
     <div>
-      <h2 className='text-4xl mb-6'>{category}</h2>
+      <h2 className='text-4xl mb-6'>{capitalizeFirstLetter(category)}</h2>
       
       {/* Contenedor principal con flexbox */}
       <div className='flex'>
@@ -27,7 +29,7 @@ function ProductsCategory() {
         {/* Columna de filtros */}
         <div className="w-1/4 p-4 bg-white shadow-md rounded-lg">
           <h3 className="text-xl font-bold mb-4">Filtros</h3>
-          {/* Aquí puedes agregar tus opciones de filtros */}
+          {}
           <div className="mb-4">
             <h4 className="font-semibold mb-2">Precio</h4>
             <input type="range" min="0" max="5000" />
