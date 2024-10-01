@@ -20,20 +20,15 @@ const Home = () => {
 
   return (
     <div>
-      {/* Barra de Navegación */}
 
-      {/* Banner o Carrusel */}
       <Banner />
 
-      {/* Sección de contenido donde se desplaza el botón */}
       <div id="content" className="p-4">
-        {/* Sección de Categorías */}
         <section>
           <h2 className="text-2xl font-bold text-center mb-4">
             Explora por Categoría
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Primera fila con una imagen grande */}
             <div className="relative col-span-2 md:col-span-2 h-64">
               <Link to="/products/vinos">
                 <img
@@ -47,7 +42,6 @@ const Home = () => {
               </Link>
             </div>
 
-            {/* Segunda imagen, más pequeña */}
             <div className="relative col-span-2 md:col-span-1 h-64">
               <Link to="/products/licores">
                 <img
@@ -61,7 +55,6 @@ const Home = () => {
               </Link>
             </div>
 
-            {/* Fila con dos imágenes más pequeñas */}
             <div className="relative col-span-1 md:col-span-1 row-span-2 h-full">
               <Link to="/products/cervezas">
                 <img
@@ -103,7 +96,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Sección de Productos Recomendados */}
         <section className="p-4 bg-gray-100">
           <h2 className="text-2xl font-bold text-center mb-4">
             Productos Recomendados
@@ -119,7 +111,6 @@ const Home = () => {
               />
             ))}
 
-            {/* Repite más tarjetas de productos aquí */}
           </div>
         </section>
       </div>

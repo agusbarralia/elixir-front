@@ -3,9 +3,9 @@ import { useLocation } from 'react-router-dom';
 import Home from "./page/Home";
 import ProductPage from "./page/ProductDetail";
 import ProductsCategory from "./page/ProductsCategory";
-import Navbar from "./components/NavBar";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { BrowserRouter as Router, Routes, Route  } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Cart from './page/Cart';
 import Login from './page/Login';
 import Register from './page/Register';
@@ -17,8 +17,8 @@ function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);  // Restablece el scroll a la parte superior
-  }, [pathname]);  // El efecto se activa cada vez que el pathname cambia
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return null;
 }
@@ -28,26 +28,24 @@ function App() {
   return (
     <>
       <div className="flex flex-col min-h-screen">
-        <Router>
-          <ScrollToTop />
-          {/* Encierra todo excepto el Footer dentro del flex-grow */}
-          <div className="flex-grow">
-            <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/product/:id" element={<ProductPage />} />
-                <Route path="/products/:category" element={<ProductsCategory />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/orders" element={<OrderHistory />} />
-                <Route path="/order/:id" element={<OrderDetail />} />
+        <ScrollToTop />
+        <div className="flex-grow">
+          <Navbar />
+            <Routes>
+              
+              <Route path="/" element={<Home />} />
+              <Route path="/product/:id" element={<ProductPage />} />
+              <Route path="/products/:category" element={<ProductsCategory />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/orders" element={<OrderHistory />} />
+              <Route path="/order/:id" element={<OrderDetail />} />
 
-              </Routes>
-          </div>
-          <Footer />
-        </Router>
+            </Routes>
+        </div>
+        <Footer />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ const Banner = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeIn(true);
-    }, 100); // Delay para la aparición del texto
+    }, 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -30,8 +30,7 @@ const Banner = () => {
       <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-center">
         <div className={`text-center text-white transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
           <h2 className="text-6xl font-bold animate-bounce">Elixir</h2>
-          <p className="mt-2 text-lg font-semibold animate-pulse">¡Descubre nuestra selección especial!</p>
-          {/* Botón "Comprar Ahora" dentro del contenedor del texto */}
+          <p className="mt-2 text-lg font-semibold animate-pulse">¡Uno se toma, el otro se saborea!</p>
           <button 
             onClick={handleScrollToContent} 
             className="mt-4 px-6 py-3 bg-red-600 rounded hover:bg-red-700 transition duration-300 transform hover:scale-105"

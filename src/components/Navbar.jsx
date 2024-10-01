@@ -5,22 +5,21 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
-  const [timeoutId, setTimeoutId] = useState(null); // Estado para almacenar el timeout
-  const [cartTimeoutId, setCartTimeoutId] = useState(null); // Estado para el timeout del carrito
+  const [timeoutId, setTimeoutId] = useState(null);
+  const [cartTimeoutId, setCartTimeoutId] = useState(null);
 
   const handleCartClick = () => {
-    navigate('/cart');  // Navega a la ruta del carrito
+    navigate('/cart');
   };
 
   const handleCategoryClick = (Categoria) => {
-    navigate(`/products/${Categoria.toLowerCase()}`);  // Navega a la ruta del carrito
+    navigate(`/products/${Categoria.toLowerCase()}`);
 };
 
   const handleCheckoutClick = () => {
-    navigate('/checkout');  // Navega a la ruta de checkout
+    navigate('/checkout');
   };
 
-  // Simulación de productos en el carrito
   const cartItems = [
     { id: 1, title: 'Bermuda BROOKLYN', price: 45100, quantity: 1 },
     { id: 2, title: 'Remera OVER', price: 22300, quantity: 1 },
@@ -28,7 +27,6 @@ const Navbar = () => {
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-  // Simulación de categorías y subcategorías
   const categories = [
     {
       title: 'Vinos',
@@ -65,13 +63,11 @@ const Navbar = () => {
   };
 
   const handleMouseEnter = (index) => {
-    // Limpia cualquier timeout previo
     clearTimeout(timeoutId);
     setActiveCategory(index);
   };
 
   const handleMouseLeave = () => {
-    // Establece un timeout para cerrar el dropdown después de un pequeño retraso
     const id = setTimeout(() => {
       setActiveCategory(null);
     }, 200); // Tiempo en milisegundos
@@ -79,22 +75,21 @@ const Navbar = () => {
   };
 
   const handleCartMouseEnter = () => {
-    clearTimeout(cartTimeoutId); // Limpiar cualquier timeout previo
+    clearTimeout(cartTimeoutId);
     setIsCartHovered(true);
   };
 
   const handleCartMouseLeave = () => {
-    // Establece un timeout para cerrar el dropdown del carrito después de un pequeño retraso
     const id = setTimeout(() => {
       setIsCartHovered(false);
-    }, 200); // Tiempo en milisegundos
+    }, 200);
     setCartTimeoutId(id);
   };
 
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
       <div className="text-xl font-bold">
-        <a href="/">VinoMarket</a>
+        <a href="/">Elixir</a>
       </div>
       
       <div className="flex space-x-4 relative">
@@ -107,7 +102,6 @@ const Navbar = () => {
           >
             <button onClick={() => handleCategoryClick(category.title)} className="hover:text-gray-400">{category.title}</button>
             
-            {/* Dropdown de subcategorías */}
             {activeCategory === index && (
               <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white text-black rounded-lg shadow-lg p-4 z-10">
                 {category.subcategories.map((subcategory, subIndex) => (
@@ -153,7 +147,6 @@ const Navbar = () => {
             )}
           </button>
           
-          {/* Dropdown del carrito */}
           {isCartHovered && (
             <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-white text-black rounded-lg shadow-lg p-4 z-10">
               <h3 className="font-bold mb-2">Carrito / ${subtotal.toLocaleString()}</h3>

@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 
 function ProductsCategory() {
-  const { category } = useParams();  // Obtiene el ID del categoria desde la URL
+  const { category } = useParams();
 
   const products = [
     { id: 1, image: '/trumpeter.png', title: 'Vino Recomendado', price: 1500, category:"vinos"},
@@ -23,10 +23,7 @@ function ProductsCategory() {
     <div>
       <h2 className='text-4xl mb-6'>{capitalizeFirstLetter(category)}</h2>
       
-      {/* Contenedor principal con flexbox */}
       <div className='flex'>
-        
-        {/* Columna de filtros */}
         <div className="w-1/4 p-4 bg-white shadow-md rounded-lg">
           <h3 className="text-xl font-bold mb-4">Filtros</h3>
           {}
@@ -42,11 +39,9 @@ function ProductsCategory() {
             <div>
               <label><input type="checkbox" /> Tinto</label>
             </div>
-            {/* Más filtros */}
           </div>
         </div>
         
-        {/* Sección de productos */}
         <section className="flex-grow p-4 bg-gray-100">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {filteredProducts.map((product) => (

@@ -5,7 +5,7 @@ const Footer = () => {
     <footer className="bg-gray-900 text-white p-6">
       <div className="flex justify-between">
         <div>
-          <h3 className="font-bold">VinoMarket</h3>
+          <h3 className="font-bold">Elixir</h3>
           <p>Explora los mejores vinos y bebidas.</p>
         </div>
         <div className="space-y-2">
