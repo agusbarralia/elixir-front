@@ -27,7 +27,7 @@ const Banner = () => {
         backgroundRepeat: 'no-repeat'
       }}
     >
-      <div className="absolute inset-0 bg-black bg-opacity-30 flex flex-col justify-center items-right">
+      <div className="absolute inset-0 flex flex-col justify-center items-right">
         <div className={`text-right mr-20 p-20 text-white transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
           {/* Contenedor relativo para el logo y el botón */}
           <div className="relative inline-block">

@@ -1,69 +1,43 @@
-//import { useParams } from 'react-router-dom';
-
 import ProductDescription from "../components/ProductDescription";
+import ProductAddToCart from "../components/ProductAddToCart";
+import ProductData from "../components/ProductData";
+import ImageCarousel from "../components/ImageCarousel"; // Importa el nuevo componente
 
 const ProductDetail = () => {
   //const { id } = useParams();  // Obtiene el ID del producto desde la URL
+
+  // Lista de imágenes para el carrusel
+  const images = [
+    "/beer.jpg",
+    "/beer2.jpg",
+    "/banner_main.png",
+    "/beer.jpg",
+    "/beer2.jpg",
+    "/banner_main.png",
+    "/beer.jpg",
+    "/beer2.jpg",
+    "/banner_main.png",
+    "/beer.jpg",
+    "/beer2.jpg",
+    "/banner_main.png",
+    "/trumpeter 1.png"
+  ];
 
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-9xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-white rounded-lg ">
         <div className="flex justify-center bg-gray-50 pt-20">
-          <img
-            src="/trumpeter 1.png"
-            alt="Shannon Mount Bullet 2015"
-            className="w-full max-w-sm h-auto object-cover"
-          />
+          {/* Usamos el ImageCarousel aquí */}
+          <ImageCarousel images={images} />
         </div>
         <div className="flex flex-col justify-between">
-          <ProductDescription title={"Shannon"} brand={"Mount Bullet 2016"} description={"ALTO VINO"}/>
-
-          <div className="mt-4">
-            <div className="flex items-baseline mb-6">
-              <span className="text-3xl mr-8 ">$65</span>
-              <span className="text-gray-600 mr-10" >750 ml</span>
-              <button className="px-4 py-2 bg-gray-200 text-black rounded-l">-</button>
-              <span className="px-6 py-2 bg-white border border-gray-200">1</span>
-              <button className="px-4 py-2 bg-gray-200 text-black rounded-r">+</button>
-            </div>
-
-            <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800">
-              Add to cart
-            </button>
-          </div>
-
-          <div className="mt-8">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-semibold">Type</h4>
-                <p className="text-gray-600 ">Wine</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Color</h4>
-                <p className="text-gray-600">White</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Sweetness</h4>
-                <p className="text-gray-600">Dry</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Country</h4>
-                <p className="text-gray-600">France</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Sort</h4>
-                <p className="text-gray-600">Mount Bullet</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Region</h4>
-                <p className="text-gray-600">Savoy</p>
-              </div>
-              <div>
-                <h4 className="font-semibold">Taste</h4>
-                <p className="text-gray-600">Easy</p>
-              </div>
-            </div>
-          </div>
+          <ProductDescription 
+            title={"Shannon"} 
+            brand={"Mount Bullet 2016"} 
+            description={"Un vino tinto elegante, originario de la región vinícola de Irlanda, conocido por su rica mezcla de uvas que crean un perfil de sabor distintivo. Su aroma se caracteriza por notas de frutos oscuros, como moras y ciruelas, combinadas con sutiles matices de especias y roble. En boca, presenta una estructura suave y equilibrada, con taninos bien integrados que hacen de cada sorbo una experiencia deliciosa y memorable."}
+          />
+          <ProductAddToCart price={"$65"} />
+          <ProductData type={"Vino"} color={"Blanco"} variety={"Malbec"} size={"750ml"} />
         </div>
       </div>
     </div>
