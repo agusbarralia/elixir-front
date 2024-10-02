@@ -1,5 +1,7 @@
 //import { useParams } from 'react-router-dom';
 
+import ProductDescription from "../components/ProductDescription";
+
 const ProductDetail = () => {
   //const { id } = useParams();  // Obtiene el ID del producto desde la URL
 
@@ -14,13 +16,7 @@ const ProductDetail = () => {
           />
         </div>
         <div className="flex flex-col justify-between">
-          <div>
-            <h2 className="text-3xl font-bold pt-20">Shannon</h2>
-            <h3 className="text-xl text-gray-600 mb-4">MOUNT BULLET 2015</h3>
-            <p className="text-gray-700 mb-4 pt-5">
-              This organic and biodynamically produced sparkling taste is as delicious as it is unique. Welcoming from the high mountains of Savoy, the Mont Blanc Bellevard cell is extremely fresh and mineral, ideal as an aperitif or in combination with seafood.
-            </p>
-          </div>
+          <ProductDescription title={"Shannon"} brand={"Mount Bullet 2016"} description={"ALTO VINO"}/>
 
           <div className="mt-4">
             <div className="flex items-baseline mb-6">
