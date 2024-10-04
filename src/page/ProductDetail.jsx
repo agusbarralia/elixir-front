@@ -29,7 +29,7 @@ const ProductDetail = () => {
             brand={product.brand || "Marca desconocida"} 
             description={product.productDescription || "Descripción no disponible."}
           />
-          <ProductAddToCart price={`$${product.price}`} />
+          <ProductAddToCart price={product.price} productId={product.productId} productName={product.name}/>
           <ProductData 
             category={product.categoryName || "Categoria desconocida"}
             subCategory={product.subCategoryName || "Color no especificado"}

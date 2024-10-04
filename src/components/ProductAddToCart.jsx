@@ -1,20 +1,46 @@
-import React, { useState } from 'react'
+/* eslint-disable react/prop-types */
+import { useState } from 'react'
 
-function ProductAddToCart({ price }) {
+function ProductAddToCart({ price , productId, productName}) {
   const [quantity, setQuantity] = useState(1);
 
   // Función para actualizar la cantidad basada en un incremento o decremento
   const changeQuantity = (delta) => {
     setQuantity((prevQuantity) => {
       const newQuantity = prevQuantity + delta;
-      return newQuantity > 0 ? newQuantity : 1; // Asegurarse de que la cantidad no sea menor a 1
+      return newQuantity > 0 ? newQuantity : 1; 
     });
   };
+
+  const addToCart = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // Asegúrate de incluir el token de autenticación si es necesario
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`${productName} agregado al carrito con éxito!`);
+      } else {
+        alert('No se pudo agregar el producto al carrito.');
+      }
+    } catch (error) {
+      console.error('Error al agregar al carrito:', error);
+      alert('Hubo un problema al agregar el producto al carrito.');
+    }
+  };
+
+
 
   return (
     <div className="mt-4">
       <div className="flex items-baseline mb-6">
-        <span className="text-3xl mr-8">{price}</span>
+        <span className="text-3xl mr-8">${price}</span>
 
         <div className="flex items-center">
           {/* Botón para disminuir cantidad */}
@@ -45,7 +71,7 @@ function ProductAddToCart({ price }) {
       </div>
 
       
-      <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800">
+      <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}>
         Add to cart
       </button>
     </div>
