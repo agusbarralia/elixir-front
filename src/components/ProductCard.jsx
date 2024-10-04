@@ -12,7 +12,7 @@ const ProductCard = ({product}) => {
   const navigate = useNavigate();  // Hook para la navegación
 
   return (
-    <div className="bg-white p-4 rounded shadow-lg text-center hover:cursor-pointer hover:bg-gray-100">
+    <div className="bg-white p-4 rounded text-center hover:cursor-pointer hover:bg-gray-100">
       <div 
       onClick={() => navigate(`/product/${product.name}`, { state: { product } })}
       >

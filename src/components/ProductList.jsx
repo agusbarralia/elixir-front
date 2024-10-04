@@ -4,7 +4,7 @@ import ProductCard from './ProductCard'
 function ProductList({title,products}) {
 
   return (
-    <section className="p-4 bg-gray-100">
+    <section className="p-4 bg-white">
           <h2 className="text-2xl font-bold text-center mb-4">
             {title}
           </h2>

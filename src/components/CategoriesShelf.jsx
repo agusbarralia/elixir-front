@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 function CategoriesShelf() {
   return (
-        <section>
-          <h2 className="text-2xl font-bold text-center mb-4">
+        <section className='m-20'>
+          <h2 className="text-2xl font-bold text-center mb-10">
             Explora por Categoría
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
