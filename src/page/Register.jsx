@@ -1,21 +1,62 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
-  const [name, setName] = useState('');
+  const navigate = useNavigate(); // Hook para redireccionar
+
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para registrar al usuario
+    // Verificar si las contraseñas coinciden
     if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden');
       return;
     }
-    console.log("Nombre:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
+
+    // Crear el objeto de usuario para enviar al backend
+    const user = {
+      firstname,
+      lastname,
+      email,
+      password,
+    };
+
+    // Realizar la solicitud al backend
+    fetch('http://localhost:8080/api/v1/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Error al registrarse');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Manejar la respuesta del backend
+      console.log('Registro exitoso:', data);
+      // Si es necesario, puedes almacenar el JWT en localStorage
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('role', data.role);      
+
+      if (data.role === 'ADMIN') {
+        navigate('/cart'); // Redirige al dashboard de admin
+      } else {
+        navigate('/'); // Redirige al homepage o alguna otra página
+      }
+
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
   };
 
   return (
@@ -29,8 +70,19 @@ function Register() {
               type="text"
               id="name"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={firstname}
+              onChange={(e) => setFirstname(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="lastname" className="block text-gray-700 text-sm font-bold mb-2">Apellido</label>
+            <input
+              type="text"
+              id="lastname"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              value={lastname}
+              onChange={(e) => setLastname(e.target.value)}
               required
             />
           </div>
