@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import CartDropdown from './CartDropdown';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -126,62 +127,25 @@ const Navbar = () => {
         ))}
       </div>
 
-      <div className="flex items-center space-x-4 relative">
-        <input
-          type="text"
-          className="px-2 py-1 rounded-md"
-          placeholder="Buscar..."
-        />
-        
-        <div 
-          className="relative" 
-          onMouseEnter={handleCartMouseEnter} 
-          onMouseLeave={handleCartMouseLeave}
-        >
-          <button className="text-lg" onClick={handleCartClick}>
-            🛒
-            {cartItems.length > 0 && (
-              <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1">
-                {cartItems.length}
-              </span>
-            )}
-          </button>
-          
-          {isCartHovered && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-white text-black rounded-lg shadow-lg p-4 z-10">
-              <h3 className="font-bold mb-2">Carrito / ${subtotal.toLocaleString()}</h3>
-              <ul className="max-h-40 overflow-y-auto mb-2">
-                {cartItems.map(item => (
-                  <li key={item.id} className="flex justify-between text-sm border-b border-gray-200 py-1">
-                    <span>{item.title}</span>
-                    <span>${item.price.toLocaleString()}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex justify-between mt-2 font-semibold">
-                <span>Subtotal:</span>
-                <span>${subtotal.toLocaleString()}</span>
-              </div>
-              <div className="mt-4">
-                <button 
-                  onClick={handleCartClick} 
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
-                >
-                  Ver Carrito
-                </button>
-                <button 
-                  onClick={handleCheckoutClick}
-                  className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 mt-1 transition duration-300"
-                >
-                  Finalizar Compra
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+    <div className="flex items-center space-x-2 relative">
+      <input
+        type="text"
+        className="px-2 py-1 rounded-md"
+        placeholder="Buscar..."
+      />
 
-        <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
-      </div>
+      <CartDropdown 
+          cartItems={cartItems} 
+          handleCartClick={handleCartClick} 
+          handleCartMouseEnter={handleCartMouseEnter} 
+          handleCartMouseLeave={handleCartMouseLeave} 
+          isCartHovered={isCartHovered} 
+          subtotal={subtotal} 
+          handleCheckoutClick={handleCheckoutClick}
+      />
+
+      <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
+    </div>
     </nav>
   );
 };

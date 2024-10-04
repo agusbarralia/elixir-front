@@ -1,13 +1,17 @@
 import { Link } from "react-router-dom";
 
-const ProductCard = ( {image, title, price, productId}) => {
+const ProductCard = ({ image, imageType, title, price, productId }) => {
+  // Si la imagen es en formato base64, añade el prefijo necesario.
+  const imageUrl = imageType ? `data:${imageType};base64,${image}` : image;
+
   return (
     <div className="bg-white p-4 rounded shadow-lg text-center">
       <Link to={`/product/${productId}`}>
         <img
-          src={image}
+          src={imageUrl}
           alt={title}
           className="w-full h-32 object-cover rounded-md"
+          onError={(e) => (e.target.src = "/placeholder.png")} // Muestra un placeholder si la imagen falla.
         />
       </Link>
       <h3 className="mt-2">{title}</h3>
