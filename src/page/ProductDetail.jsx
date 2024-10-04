@@ -18,7 +18,7 @@ const ProductDetail = () => {
   return (
     <div className= " py-8">
 
-      <div className="max-w-9xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 z-10 mx-4 md:mx-8"> {/* Agregado mx-4 para márgenes a los costados */}
+      <div className="max-w-9xl grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 z-10 mx-4 md:mx-8"> {/* Agregado mx-4 para márgenes a los costados */}
         <div className="flex justify-center bg-gray-50 p-4 rounded-lg shadow-inner">
           {/* Usamos el ImageCarousel aquí */}
           <ImageCarousel images={images} />

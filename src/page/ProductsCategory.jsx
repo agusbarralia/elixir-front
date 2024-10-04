@@ -1,11 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import Filters from '../components/Filters';
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 function ProductsCategory() {
   const { category } = useParams();
-  const navigate = useNavigate();  // Hook para la navegación
   const [products, setProducts] = useState([]);
 
   const url = `http://localhost:8080/products/category?categoryName=${category}`;
@@ -20,7 +19,7 @@ function ProductsCategory() {
       })
       .then((data) => setProducts(data))
       .catch((error) => console.error("Error:", error));
-  }, [category]);
+  }, [url]);
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -36,18 +35,10 @@ function ProductsCategory() {
         <section className="flex-grow p-4 bg-gray-100">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {products.map((product) => (
-              <div 
-                key={product.productId} 
-                onClick={() => navigate(`/product/${product.name}`, { state: { product } })}  // Incluir el nombre del producto en la URL
-              >
                 <ProductCard 
-                  image={product.imagesList[0]?.imageData || "/placeholder.png"} 
-                  imageType="image/png"
-                  title={product.name} 
-                  price={product.price} 
-                  productId={product.productId} 
+                  product={product} 
+                  key={product.productId} 
                 />
-              </div>
             ))}
           </div>
         </section>
