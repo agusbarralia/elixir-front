@@ -12,6 +12,7 @@ import Register from './page/Register';
 import Checkout from './page/Checkout';
 import OrderHistory from './page/OrderHistory';
 import OrderDetail from './page/OrderDetail';
+import AdminProductsPage from './page/AdminProductsPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,6 +35,7 @@ function App() {
             <Routes>
               
               <Route path="/" element={<Home />} />
+              <Route path="admin/products" element={<AdminProductsPage/>} />
               <Route path="/product/:productName" element={<ProductPage />} />
               <Route path="/products/:category" element={<ProductsCategory />} />
               <Route path="/cart" element={<Cart />} />

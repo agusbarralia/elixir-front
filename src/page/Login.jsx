@@ -26,8 +26,6 @@ function Login() {
       const data = await response.json();
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('role', data.role); // Si quieres guardar el rol del usuario
-      console.log(localStorage.getItem('token'))
-      console.log(localStorage.getItem('role'))
 
       // Redirigir al usuario dependiendo de su rol
       if (data.role === 'ADMIN') {

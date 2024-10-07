@@ -15,7 +15,7 @@ const Navbar = () => {
 
   const handleCategoryClick = (Categoria) => {
     navigate(`/products/${Categoria.toLowerCase()}`);
-};
+  };
 
   const handleCheckoutClick = () => {
     navigate('/checkout');
@@ -87,6 +87,9 @@ const Navbar = () => {
     setCartTimeoutId(id);
   };
 
+  // Obtener el rol del usuario del local storage
+  const role = localStorage.getItem('role');
+
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
       <div className="text-xl font-bold">
@@ -127,14 +130,14 @@ const Navbar = () => {
         ))}
       </div>
 
-    <div className="flex items-center space-x-2 relative">
-      <input
-        type="text"
-        className="px-2 py-1 rounded-md"
-        placeholder="Buscar..."
-      />
+      <div className="flex items-center space-x-2 relative">
+        <input
+          type="text"
+          className="px-2 py-1 rounded-md"
+          placeholder="Buscar..."
+        />
 
-      <CartDropdown 
+        <CartDropdown 
           cartItems={cartItems} 
           handleCartClick={handleCartClick} 
           handleCartMouseEnter={handleCartMouseEnter} 
@@ -142,10 +145,15 @@ const Navbar = () => {
           isCartHovered={isCartHovered} 
           subtotal={subtotal} 
           handleCheckoutClick={handleCheckoutClick}
-      />
+        />
 
-      <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
-    </div>
+        {/* Mostrar enlace a administración solo si el rol es admin */}
+        {role === 'ADMIN' && (
+          <a href="/admin/products" className="hover:text-gray-400">Administración</a>
+        )}
+
+        <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
+      </div>
     </nav>
   );
 };
