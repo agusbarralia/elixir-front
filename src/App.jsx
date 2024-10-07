@@ -12,7 +12,12 @@ import Register from './page/Register';
 import Checkout from './page/Checkout';
 import OrderHistory from './page/OrderHistory';
 import OrderDetail from './page/OrderDetail';
-import AdminProductsPage from './page/AdminProductsPage';
+import AdminProduct from './page/AdminProduct'; // Cambié el nombre para que coincida con el formato
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminDashboard from './page/AdminDashboard'; // Cambié la capitalización para que coincida con el formato
+import Sidebar from './components/Sidebar';
+import AdminProductForm from './page/AdminProductForm';
+import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -24,35 +29,66 @@ function ScrollToTop() {
   return null;
 }
 
-
 function App() {
+  const location = useLocation(); // Obtener la ubicación actual
+
+  // Determinar si estamos en una ruta de administración
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
     <>
       <div className="flex flex-col min-h-screen">
         <ScrollToTop />
-        <div className="flex-grow">
-          <Navbar />
-            <Routes>
-              
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/admin/products"
-                element={
-                  <ProtectedRoute>
-                    <AdminProductsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/product/:productName" element={<ProductPage />} />
-              <Route path="/products/:category" element={<ProductsCategory />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/orders" element={<OrderHistory />} />
-              <Route path="/order/:id" element={<OrderDetail />} />
-
-            </Routes>
+        <div className={`flex-grow ${isAdminRoute ? 'flex' : 'flex-grow'}`}>
+          {isAdminRoute ? (
+            <div className="flex h-screen">
+              <Sidebar />
+              <div className="flex-grow"> {/* Espacio para el contenido del admin */}
+                <Routes>
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminDashboard />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/products"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminProduct />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/products/create"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminProductForm />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  {/* Otras rutas de administración */}
+                </Routes>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/product/:productName" element={<ProductPage />} />
+                <Route path="/products/:category" element={<ProductsCategory />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/orders" element={<OrderHistory />} />
+                <Route path="/order/:id" element={<OrderDetail />} />
+              </Routes>
+            </>
+          )}
         </div>
         <Footer />
       </div>
@@ -61,4 +97,3 @@ function App() {
 }
 
 export default App;
-

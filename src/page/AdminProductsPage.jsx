@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Función para la creación y edición de productos
@@ -15,6 +15,7 @@ const AdminProductsPage = () => {
     }, [role, navigate]);
 
   const [products, setProducts] = useState([]);
+  
   const [newProduct, setNewProduct] = useState({
     name: '',
     product_description: '',
@@ -23,7 +24,7 @@ const AdminProductsPage = () => {
     varietyId: '',
     subCategoryId: '',
     categoryId: '',
-    images: null,
+    images: [],
   });
 
   const [productToUpdate, setProductToUpdate] = useState(null);
@@ -45,30 +46,61 @@ const AdminProductsPage = () => {
     setNewProduct({ ...newProduct, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    console.log("ARCHIVO")
+    console.log(selectedFile);  // Verifica que el archivo sea seleccionado
+    setNewProduct({ ...newProduct, images: selectedFile });
+  };
+
   // Crear un nuevo producto
   const handleCreateProduct = (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
-    Object.keys(newProduct).forEach(key => {
-      formData.append(key, newProduct[key]);
-    });
+    
+    // Agregar los valores de texto al FormData
+    formData.append('name', newProduct.name);
+    formData.append('product_description', newProduct.product_description);
+    formData.append('price', newProduct.price);
+    formData.append('stock', newProduct.stock);
+    formData.append('varietyId', newProduct.varietyId);
+    formData.append('subCategoryId', newProduct.subCategoryId);
+    formData.append('categoryId', newProduct.categoryId);
+
+    // Asegúrate de que no sea null antes de agregar la imagen
+    if (newProduct.images) {
+        formData.append('images', newProduct.images);
+    }
+    console.log(formData.get('images'));  // Verifica si la imagen se ha adjuntado correctamente
+
+    console.log(newProduct)
+    console.log(formData)
 
     fetch(`${baseUrl}/create`, {
       method: 'POST',
-      body: formData,
+      body: formData,  // Aquí mandamos el formData, no newProduct
       headers: {
         'Authorization': `Bearer ${token}`,  // Enviar el token en la cabecera
-                },
+      },
     })
       .then(response => response.json())
       .then(data => {
         setProducts([...products, data]);  // Agregar el producto recién creado a la lista
-        setNewProduct({ name: '', product_description: '', price: '', stock: '', varietyId: '', subCategoryId: '', categoryId: '', images: null });
+        // Resetear el formulario
+        setNewProduct({
+          name: '',
+          product_description: '',
+          price: '',
+          stock: '',
+          varietyId: '',
+          subCategoryId: '',
+          categoryId: '',
+          images: null
+        });
       })
       .catch(error => console.error('Error:', error));
   };
-
   // Cambiar estado de un producto
   const handleChangeState = (productId) => {
     fetch(`${baseUrl}/changestate?product_id=${productId}`, {
@@ -124,13 +156,13 @@ const AdminProductsPage = () => {
         <input name="varietyId" value={newProduct.varietyId} onChange={handleInputChange} placeholder="ID de Variedad" className="border p-2 mb-2 block" required />
         <input name="subCategoryId" value={newProduct.subCategoryId} onChange={handleInputChange} placeholder="ID de SubCategoría" className="border p-2 mb-2 block" required />
         <input name="categoryId" value={newProduct.categoryId} onChange={handleInputChange} placeholder="ID de Categoría" className="border p-2 mb-2 block" required />
-        <input type="file" name="images" onChange={(e) => setNewProduct({ ...newProduct, images: e.target.files[0] })} className="border p-2 mb-2 block" />
+        <input type="file" name="images" onChange={handleFileChange} className="border p-2 mb-2 block" />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2">Crear Producto</button>
       </form>
 
       {/* Lista de productos con acciones */}
       <h2 className="text-2xl mb-4">Lista de Productos</h2>
-      <ul>
+      <ul>  
         {products.map(product => (
           <li key={product.productId} className="mb-4">
             <div className="border p-4">

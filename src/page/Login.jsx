@@ -29,7 +29,7 @@ function Login() {
 
       // Redirigir al usuario dependiendo de su rol
       if (data.role === 'ADMIN') {
-        navigate('/cart'); // Redirige al dashboard de admin
+        navigate('/admin/'); // Redirige al dashboard de admin
       } else {
         navigate('/'); // Redirige al homepage o alguna otra página
       }

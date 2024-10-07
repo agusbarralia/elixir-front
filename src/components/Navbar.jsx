@@ -146,18 +146,18 @@ const Navbar = () => {
           placeholder="Buscar..."
         />
 
-        <CartDropdown 
-          cartItems={cartItems} 
-          handleCartClick={handleCartClick} 
-          handleCartMouseEnter={handleCartMouseEnter} 
-          handleCartMouseLeave={handleCartMouseLeave} 
-          isCartHovered={isCartHovered} 
-          subtotal={subtotal} 
-          handleCheckoutClick={handleCheckoutClick}
-        />
-
-        {/* Mostrar enlace a administración solo si el rol es admin */}
-        {role === 'ADMIN' && (
+        {/* Mostrar el carrito solo si el rol no es ADMIN */}
+        {role !== 'ADMIN' ? (
+          <CartDropdown 
+            cartItems={cartItems} 
+            handleCartClick={handleCartClick} 
+            handleCartMouseEnter={handleCartMouseEnter} 
+            handleCartMouseLeave={handleCartMouseLeave} 
+            isCartHovered={isCartHovered} 
+            subtotal={subtotal} 
+            handleCheckoutClick={handleCheckoutClick}
+          />
+        ) : (
           <a href="/admin/products" className="hover:text-gray-400">Administración</a>
         )}
 
