@@ -35,7 +35,14 @@ function App() {
             <Routes>
               
               <Route path="/" element={<Home />} />
-              <Route path="admin/products" element={<AdminProductsPage/>} />
+              <Route
+                path="/admin/products"
+                element={
+                  <ProtectedRoute>
+                    <AdminProductsPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/product/:productName" element={<ProductPage />} />
               <Route path="/products/:category" element={<ProductsCategory />} />
               <Route path="/cart" element={<Cart />} />

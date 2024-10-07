@@ -90,6 +90,15 @@ const Navbar = () => {
   // Obtener el rol del usuario del local storage
   const role = localStorage.getItem('role');
 
+  // Manejar el cierre de sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Eliminar el token del local storage
+    localStorage.removeItem('role'); // Eliminar el rol (opcional)
+    navigate('/login'); // Redirigir a la página de inicio de sesión
+  };
+
+  const isLoggedIn = !!localStorage.getItem('token'); // Verifica si hay un token
+
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
       <div className="text-xl font-bold">
@@ -152,7 +161,11 @@ const Navbar = () => {
           <a href="/admin/products" className="hover:text-gray-400">Administración</a>
         )}
 
-        <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
+        {isLoggedIn ? (
+          <button onClick={handleLogout} className="hover:text-gray-400">Cerrar Sesión</button>
+        ) : (
+          <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
+        )}
       </div>
     </nav>
   );
