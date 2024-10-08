@@ -15,7 +15,7 @@ const Navbar = () => {
 
   const handleCategoryClick = (Categoria) => {
     navigate(`/products/${Categoria.toLowerCase()}`);
-};
+  };
 
   const handleCheckoutClick = () => {
     navigate('/checkout');
@@ -87,6 +87,18 @@ const Navbar = () => {
     setCartTimeoutId(id);
   };
 
+  // Obtener el rol del usuario del local storage
+  const role = localStorage.getItem('role');
+
+  // Manejar el cierre de sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Eliminar el token del local storage
+    localStorage.removeItem('role'); // Eliminar el rol (opcional)
+    navigate('/login'); // Redirigir a la página de inicio de sesión
+  };
+
+  const isLoggedIn = !!localStorage.getItem('token'); // Verifica si hay un token
+
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
       <div className="text-xl font-bold">
@@ -127,25 +139,34 @@ const Navbar = () => {
         ))}
       </div>
 
-    <div className="flex items-center space-x-2 relative">
-      <input
-        type="text"
-        className="px-2 py-1 rounded-md"
-        placeholder="Buscar..."
-      />
+      <div className="flex items-center space-x-2 relative">
+        <input
+          type="text"
+          className="px-2 py-1 rounded-md"
+          placeholder="Buscar..."
+        />
 
-      <CartDropdown 
-          cartItems={cartItems} 
-          handleCartClick={handleCartClick} 
-          handleCartMouseEnter={handleCartMouseEnter} 
-          handleCartMouseLeave={handleCartMouseLeave} 
-          isCartHovered={isCartHovered} 
-          subtotal={subtotal} 
-          handleCheckoutClick={handleCheckoutClick}
-      />
+        {/* Mostrar el carrito solo si el rol no es ADMIN */}
+        {role !== 'ADMIN' ? (
+          <CartDropdown 
+            cartItems={cartItems} 
+            handleCartClick={handleCartClick} 
+            handleCartMouseEnter={handleCartMouseEnter} 
+            handleCartMouseLeave={handleCartMouseLeave} 
+            isCartHovered={isCartHovered} 
+            subtotal={subtotal} 
+            handleCheckoutClick={handleCheckoutClick}
+          />
+        ) : (
+          <a href="/admin/products" className="hover:text-gray-400">Administración</a>
+        )}
 
-      <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
-    </div>
+        {isLoggedIn ? (
+          <button onClick={handleLogout} className="hover:text-gray-400">Cerrar Sesión</button>
+        ) : (
+          <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
+        )}
+      </div>
     </nav>
   );
 };
