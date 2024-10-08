@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import CategorySubcategoryVariety from '../components/CategorySubcategoryVariety';
 
 function AdminCategories() {
@@ -64,7 +64,7 @@ function AdminCategories() {
 
       {/* Componente de Categoría */}
       <CategorySubcategoryVariety 
-        title="Categorías"
+        title="Bebidas"
         fetchData={fetchCategories}
         data={categories}
         apiUrl="http://localhost:8080/categories/admin"
@@ -72,7 +72,7 @@ function AdminCategories() {
 
       {/* Componente de Subcategoría */}
       <CategorySubcategoryVariety 
-        title="Subcategorías"
+        title="Tipos Bebidas"
         fetchData={fetchSubcategories}
         data={subcategories}
         apiUrl="http://localhost:8080/subcategories/admin"
@@ -80,7 +80,7 @@ function AdminCategories() {
 
       {/* Componente de Variedad */}
       <CategorySubcategoryVariety 
-        title="Variedades"
+        title="Variedades Bebidas"
         fetchData={fetchVarieties}
         data={varieties}
         apiUrl="http://localhost:8080/varieties/admin"

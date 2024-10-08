@@ -12,9 +12,9 @@ import Register from './page/Register';
 import Checkout from './page/Checkout';
 import OrderHistory from './page/OrderHistory';
 import OrderDetail from './page/OrderDetail';
-import AdminProduct from './page/AdminProduct'; // Cambié el nombre para que coincida con el formato
+import AdminProduct from './page/AdminProduct';
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminDashboard from './page/AdminDashboard'; // Cambié la capitalización para que coincida con el formato
+import AdminDashboard from './page/AdminDashboard';
 import Sidebar from './components/Sidebar';
 import AdminProductForm from './page/AdminProductForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';

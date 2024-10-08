@@ -5,6 +5,9 @@ const AdminProduct = () => {
   const [products, setProducts] = useState([]);
   const [productToDelete, setProductToDelete] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showDiscountDialog, setShowDiscountDialog] = useState(false);
+  const [discountValue, setDiscountValue] = useState('');
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const role = localStorage.getItem('role');
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -64,6 +67,33 @@ const AdminProduct = () => {
     }
   };
 
+  const handleApplyDiscount = async (product_id) => {
+    const formData = new FormData();
+    formData.append('product_id', product_id);
+    formData.append('discount', parseFloat(discountValue/100)); // Asegúrate de que sea un número
+  
+    try {
+      const response = await fetch(`http://localhost:8080/products/admin/update/discount`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          // No establezcas 'Content-Type'
+        },
+        body: formData, // Aquí pasas el formData
+      });
+  
+      if (response.ok) {
+        //hacer algo para que el usuario sepa que OK
+        fetchProducts();
+        setShowDiscountDialog(false);
+        setDiscountValue('');
+      }
+
+    } catch (error) {
+      console.error('Error applying discount:', error);
+    }
+  };
+
   return (
     <div className="flex-1 bg-gray-100 p-6">
       <h2 className="text-2xl mb-4">Lista de Productos</h2>
@@ -99,6 +129,14 @@ const AdminProduct = () => {
                   className="bg-red-500 text-white px-2 py-1 rounded ml-2">
                   Eliminar
                 </button>
+                <button 
+                  onClick={() => {
+                    setSelectedProductId(product.productId);
+                    setShowDiscountDialog(true);
+                  }} 
+                  className="bg-green-500 text-white px-2 py-1 rounded ml-2">
+                  Aplicar Descuento
+                </button>
               </td>
             </tr>
           ))}
@@ -117,6 +155,34 @@ const AdminProduct = () => {
               </button>
               <button 
                 onClick={() => setShowConfirmDialog(false)} 
+                className="bg-gray-300 text-black px-4 py-2 rounded">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDiscountDialog && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h3 className="text-lg font-semibold">Aplicar Descuento</h3>
+            <input
+              type="number"
+              value={discountValue}
+              onChange={(e) => setDiscountValue(e.target.value)}
+              placeholder="Valor del descuento"
+              className="border px-4 py-2 rounded mt-2"
+              required
+            />
+            <div className="mt-4">
+              <button 
+                onClick={() => handleApplyDiscount(selectedProductId)} 
+                className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                Aplicar
+              </button>
+              <button 
+                onClick={() => setShowDiscountDialog(false)} 
                 className="bg-gray-300 text-black px-4 py-2 rounded">
                 Cancelar
               </button>
