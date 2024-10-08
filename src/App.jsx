@@ -18,6 +18,7 @@ import AdminDashboard from './page/AdminDashboard'; // Cambié la capitalizació
 import Sidebar from './components/Sidebar';
 import AdminProductForm from './page/AdminProductForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
+import AdminEditProduct from './page/AdminEditProduct';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -43,7 +44,7 @@ function App() {
           {isAdminRoute ? (
             <div className="flex h-screen">
               <Sidebar />
-              <div className="flex-grow"> {/* Espacio para el contenido del admin */}
+              <div className="flex-grow">
                 <Routes>
                   <Route
                     path="/admin"
@@ -66,6 +67,14 @@ function App() {
                     element={
                       <ProtectedAdminRoute>
                         <AdminProductForm />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/products/edit/:productId"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminEditProduct />
                       </ProtectedAdminRoute>
                     }
                   />

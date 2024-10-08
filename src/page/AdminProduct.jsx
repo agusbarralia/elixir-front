@@ -5,7 +5,7 @@ const AdminProduct = () => {
   const [products, setProducts] = useState([]);
   const role = localStorage.getItem('role'); // Obtener el rol del local storage
   const token = localStorage.getItem('token'); // Obtener el token JWT del local storage
-  const baseUrl = 'http://localhost:8080/products/admin';
+  //const baseUrl = 'http://localhost:8080/products/admin';
   const navigate = useNavigate(); // Hook para redireccionar
 
   useEffect(() => {
@@ -34,6 +34,9 @@ const AdminProduct = () => {
     navigate('/admin/products/create'); // Redirigir al formulario de creación de productos
   };
 
+  const handleEditProduct = (id) => {
+    navigate(`/admin/products/edit/${id}`); // Redirigir al formulario de creación de productos
+  };
   return (
       
       <div className="flex-1 bg-gray-100 p-6">
@@ -64,7 +67,7 @@ const AdminProduct = () => {
                 <td className="py-2 border-b">{product.price}</td>
                 <td className="py-2 border-b">{product.stock}</td>
                 <td className="py-2 border-b">
-                  <button className="bg-yellow-500 text-white px-2 py-1 rounded">
+                  <button onClick={() => handleEditProduct(product.productId)} className="bg-yellow-500 text-white px-2 py-1 rounded">
                     Editar
                   </button>
                   <button className="bg-red-500 text-white px-2 py-1 rounded ml-2">

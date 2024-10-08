@@ -2,6 +2,9 @@
 import React, {useState} from 'react'
 
 function ProductForm({baseUrl,role,token}) {
+
+    const baseUrl1 = 'http://localhost:8080/products/admin/create';
+
     const [newProduct, setNewProduct] = useState({
         name: '',
         product_description: '',
@@ -26,6 +29,8 @@ function ProductForm({baseUrl,role,token}) {
     
       // Manejador del envío del formulario
       const handleCreateProduct = async (e) => {
+        console.log("a")
+        console.log(baseUrl1)
         e.preventDefault();
         console.log(newProduct)
         // Crear el objeto FormData
@@ -42,11 +47,13 @@ function ProductForm({baseUrl,role,token}) {
         newProduct.images.forEach((image, index) => {
           formData.append(`images`, image);
         });
+        
         for (let pair of formData.entries()) {
             console.log(`${pair[0]}: ${pair[1]}`);
           }
+
         try {
-          const response = await fetch(`${baseUrl}/create`, {
+          const response = await fetch(`${baseUrl1}`, {
             method: 'POST',
             body: formData,
             headers: {
