@@ -19,6 +19,9 @@ function Sidebar() {
               <a href="/admin/users" className="hover:text-gray-300">Users</a>
             </li>
             <li className="mb-4">
+              <a href="/admin/category" className="hover:text-gray-300">Categories</a>
+            </li>
+            <li className="mb-4">
               <a href="/" className="hover:text-gray-300">Home</a>
             </li>
           </ul>

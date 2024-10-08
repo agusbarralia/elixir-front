@@ -19,6 +19,7 @@ import Sidebar from './components/Sidebar';
 import AdminProductForm from './page/AdminProductForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminEditProduct from './page/AdminEditProduct';
+import AdminCategories from './page/AdminCategories';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -75,6 +76,14 @@ function App() {
                     element={
                       <ProtectedAdminRoute>
                         <AdminEditProduct />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/category"
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminCategories />
                       </ProtectedAdminRoute>
                     }
                   />
