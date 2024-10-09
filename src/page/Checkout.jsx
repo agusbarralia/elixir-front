@@ -1,6 +1,11 @@
 import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Checkout() {
+  const location = useLocation();
+  const cartItems = location.state?.cartItems || []; 
+  const navigate = useNavigate();
+
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
     address: '',
@@ -15,22 +20,33 @@ function Checkout() {
     cvv: '',
   });
 
-
-  const cartItems = [
-    { id: 1, title: 'Vino Recomendado', price: 1500, quantity: 2 },
-    { id: 2, title: 'Cerveza Artesanal', price: 800, quantity: 3 },
-  ];
-
-
   const calculateSubtotal = () => {
     return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Información de Envío:", shippingInfo);
     console.log("Información de Pago:", paymentInfo);
+    
+    fetch('http://localhost:8080/checkout/process', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud de checkout');
+        }
+        return response.json();
+      })
+      .then(() => {
+        navigate('/thankspage');
+      })
+      .catch((error) => console.error("Error al procesar checkout:", error));
+
   };
 
   return (

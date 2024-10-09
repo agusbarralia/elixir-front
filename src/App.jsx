@@ -20,6 +20,8 @@ import AdminProductForm from './page/AdminProductForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminEditProduct from './page/AdminEditProduct';
 import AdminCategories from './page/AdminCategories';
+import ThankPage from './page/ThankPage';
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -104,6 +106,8 @@ function App() {
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<OrderHistory />} />
                 <Route path="/order/:id" element={<OrderDetail />} />
+                <Route path="/thankspage" element={<ThankPage />} />
+
               </Routes>
             </>
           )}
