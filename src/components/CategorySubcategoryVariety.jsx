@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function CategorySubcategoryVariety({ title, fetchData, data, apiUrl }) {
   const [newItem, setNewItem] = useState('');

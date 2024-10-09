@@ -44,7 +44,7 @@ function ProductForm({baseUrl,role,token}) {
         formData.append('categoryId', newProduct.categoryId);
     
         // Añadir cada imagen al FormData
-        newProduct.images.forEach((image, index) => {
+        newProduct.images.forEach((image) => {
           formData.append(`images`, image);
         });
         

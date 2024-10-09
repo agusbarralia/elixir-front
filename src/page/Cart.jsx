@@ -72,7 +72,7 @@ function Cart() {
   }, []);
 
   const handleCheckoutClick = () => {
-    navigate('/checkout');
+    navigate('/checkout', { state: { cartItems } });
   };
 
   const calculateSubtotal = () => {
