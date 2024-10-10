@@ -89,6 +89,22 @@ function App() {
                       </ProtectedAdminRoute>
                     }
                   />
+                  <Route
+                    path="/admin/orders"
+                    element={
+                      <ProtectedAdminRoute>
+                        <OrderHistory />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/orders/:id"
+                    element={
+                      <ProtectedAdminRoute>
+                        <OrderDetail />
+                      </ProtectedAdminRoute>
+                    }
+                  />
                   {/* Otras rutas de administración */}
                 </Routes>
               </div>
@@ -105,7 +121,7 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/orders" element={<OrderHistory />} />
-                <Route path="/order/:id" element={<OrderDetail />} />
+                <Route path="/orders/:id" element={<OrderDetail />} />
                 <Route path="/thankspage" element={<ThankPage />} />
 
               </Routes>
