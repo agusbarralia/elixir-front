@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+
 import { useNavigate} from "react-router-dom";
 
 const ProductCard = ({product}) => {
@@ -30,13 +31,25 @@ const ProductCard = ({product}) => {
   const imageType = "image/png"
   const image = product.imagesList[0]?.imageData || "/placeholder.jpg" 
 
+
+const ProductCard = ({ product }) => {
+  // Extrae la imagen del producto y el descuento.
+  const imageType = "image/png";
+  const image = product.imagesList[0]?.imageData || "/placeholder.jpg";
   const imageUrl = imageType ? `data:${imageType};base64,${image}` : image;
-  const navigate = useNavigate();  // Hook para la navegación
+  
+  // Convertir el valor del descuento a porcentaje y calcular el precio con descuento
+  const discount = product.discount || 0;  // Si discount no está definido, se toma como 0.
+  const discountPercentage = discount * 100;  // Convertir a porcentaje
+  const discountedPrice = discount > 0 ? (product.price * (1 - discount)).toFixed(2) : product.price;
+
+  // Hook para la navegación
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white p-4 rounded text-center hover:cursor-pointer hover:bg-gray-100">
       <div 
-      onClick={() => navigate(`/product/${product.name}`, { state: { product } })}
+        onClick={() => navigate(`/product/${product.name}`, { state: { product } })}
       >
         <img
           src={imageUrl}
@@ -44,8 +57,19 @@ const ProductCard = ({product}) => {
           className="w-full h-32 object-cover rounded-md"
           onError={(e) => (e.target.src = "/placeholder.png")} // Muestra un placeholder si la imagen falla.
         />
-      <h3 className="mt-2">{product.name}</h3>
-      <p className="mt-1 text-gray-700">${product.price}</p>
+        <h3 className="mt-2">{product.name}</h3>
+        
+        {/* Mostrar el precio original tachado y el precio con descuento si corresponde */}
+        {discount > 0 ? (
+          <div>
+            <p className="mt-1 text-gray-500 line-through">${product.price.toFixed(2)}</p>
+            <p className="mt-1 text-red-600 font-bold">
+              ${discountedPrice} ({discountPercentage.toFixed(0)}% OFF)
+            </p>
+          </div>
+        ) : (
+          <p className="mt-1 text-gray-700">${product.price.toFixed(2)}</p>
+        )}
       </div>
       <button className="mt-2 px-4 py-2 bg-red-600 text-white rounded" onClick={addToCart}>
         Agregar al carrito
