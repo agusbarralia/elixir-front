@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 // src/components/CartDropdown.jsx
 import React from 'react';
 
