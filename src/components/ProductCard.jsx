@@ -28,11 +28,6 @@ const ProductCard = ({product}) => {
     }
   };
 
-  const imageType = "image/png"
-  const image = product.imagesList[0]?.imageData || "/placeholder.jpg" 
-
-
-const ProductCard = ({ product }) => {
   // Extrae la imagen del producto y el descuento.
   const imageType = "image/png";
   const image = product.imagesList[0]?.imageData || "/placeholder.jpg";
