@@ -3,17 +3,16 @@ import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true); // Para mostrar un estado de carga
-  const [error, setError] = useState(null); // Para manejar errores
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
   const navigate = useNavigate();
 
-  // Función para obtener el carrito desde el backend
   const fetchCartItems = async () => {
     try {
       const response = await fetch('http://localhost:8080/cart', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Incluye el token en el encabezado
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -24,13 +23,12 @@ function Cart() {
 
       const data = await response.json();
       
-      // Mapear los productos del carrito con su estructura
       const formattedItems = data.productsCart.map((item) => ({
         id: item.product_id,
+        name: item.name,
         quantity: item.quantity,
         price: item.unit_price,
         subtotal: item.subtotal,
-        // Agrega cualquier otro campo necesario aquí o realiza una nueva solicitud
       }));
 
       setCartItems(formattedItems);
@@ -38,6 +36,51 @@ function Cart() {
     } catch (error) {
       setError(error.message);
       setLoading(false);
+    }
+  };
+
+  const updateQuantity = async (id, newQuantity) => {
+    try {
+      const formData = new FormData();
+      formData.append('productId', parseInt(id));
+      formData.append('quantity', parseInt(newQuantity) );
+
+      for (let pair of formData.entries()) {
+        console.log(`${pair[0]}: ${pair[1]}`);
+      }
+
+      const response = await fetch('http://localhost:8080/cart/update', {
+        method: 'PUT',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la cantidad');
+      }
+
+      const data = await response.text();
+      console.log('Cantidad actualizada:', data);
+
+      // Actualizar el carrito solo si la llamada fue exitosa
+      setCartItems(cartItems.map(item =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      ));
+    } catch (error) {
+      console.error('Error:', error);
+      setError(error.message);
+    }
+  };
+
+  const handleIncrement = (id, currentQuantity) => {
+    updateQuantity(id, currentQuantity + 1);
+  };
+
+  const handleDecrement = (id, currentQuantity) => {
+    if (currentQuantity > 1) {
+      updateQuantity(id, currentQuantity - 1);
     }
   };
 
@@ -55,10 +98,10 @@ function Cart() {
         throw new Error('No se pudo eliminar el producto del carrito');
       }
 
-      const data = await response.text();
-      alert(data)
+      setCartItems(cartItems.filter(item => item.id !== id));
   
       setLoading(false);
+
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -66,7 +109,6 @@ function Cart() {
 
   }
 
-  // Usar useEffect para llamar a la función fetchCartItems al cargar la página
   useEffect(() => {
     fetchCartItems();
   }, []);
@@ -81,17 +123,6 @@ function Cart() {
 
   const calculateTotalItems = () => {
     return cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  };
-
-  const updateQuantity = (id, newQuantity) => {
-    setCartItems(cartItems.map(item =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
-  };
-
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-    removeProduct(id)
   };
 
   if (loading) {
@@ -114,23 +145,28 @@ function Cart() {
             <div className="grid grid-cols-1 gap-4 mb-4">
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center border p-4">
-                  {/* Aquí puedes añadir una lógica para obtener la imagen y el título si es necesario */}
                   <div className="flex-1">
-                    <h3 className="font-semibold">Producto ID: {item.id}</h3>
+                    <h3 className="font-semibold">{item.name}</h3>
                     <p className="text-gray-600">Precio: ${item.price}</p>
                   </div>
                   <div className="flex items-center">
-                    <input 
-                      type="number" 
-                      min="1" 
-                      value={item.quantity} 
-                      onChange={(e) => updateQuantity(item.id, parseInt(e.target.value))}
-                      className="border p-1 w-16 text-center mr-4"
-                    />
-                    <p className="font-semibold">${item.price * item.quantity}</p>
+                    <button 
+                      onClick={() => handleDecrement(item.id, item.quantity)}
+                      className="p-1 bg-gray-200 rounded-full"
+                    >
+                      -
+                    </button>
+                    <p className="mx-4">{item.quantity}</p>
+                    <button 
+                      onClick={() => handleIncrement(item.id, item.quantity)}
+                      className="p-1 bg-gray-200 rounded-full"
+                    >
+                      +
+                    </button>
+                    <p className="font-semibold ml-4">${item.price * item.quantity}</p>
                   </div>
                   <button 
-                    onClick={() => removeItem(item.id)} 
+                    onClick={() => removeProduct(item.id)} 
                     className="ml-4 text-red-500 hover:text-red-700">
                     Eliminar
                   </button>

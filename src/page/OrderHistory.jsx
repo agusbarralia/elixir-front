@@ -23,9 +23,6 @@ function OrderHistory() {
     .catch((error) => console.error("Error:", error));
   }, [url]);
   
-  useEffect(() => {
-    console.log(orders.length); // Solo se ejecutará cuando 'orders' cambie
-  }, [orders]);
 
   return (
     <div className="container mx-auto p-4">
