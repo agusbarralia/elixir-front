@@ -21,6 +21,7 @@ import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminEditProduct from './page/AdminEditProduct';
 import AdminCategories from './page/AdminCategories';
 import ThankPage from './page/ThankPage';
+import UserPage from './page/UserPage';
 
 
 function ScrollToTop() {
@@ -107,6 +108,7 @@ function App() {
                 <Route path="/orders" element={<OrderHistory />} />
                 <Route path="/order/:id" element={<OrderDetail />} />
                 <Route path="/thankspage" element={<ThankPage />} />
+                <Route path="/userpage" element={<UserPage />} />
 
               </Routes>
             </>
