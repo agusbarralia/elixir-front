@@ -1,6 +1,7 @@
 import  { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import CartDropdown from './CartDropdown';
+import SearchBar from './SearchBar';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -144,11 +145,8 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-2 relative">
-        <input
-          type="text"
-          className="px-2 py-1 rounded-md"
-          placeholder="Buscar..."
-        />
+        <SearchBar />
+        
         {role === 'USER' ? (<button onClick={handleOrders}>Pedidos</button>):(<div></div>)}
 
         {/* Mostrar el carrito solo si el rol no es ADMIN */}
