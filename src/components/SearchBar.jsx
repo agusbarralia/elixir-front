@@ -66,7 +66,7 @@ function SearchBar() {
 
             return (
               <div
-                key={product.id}
+                key={product.productId}
                 className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleProductClick(product)} // Llamar a la función handleProductClick
               >
