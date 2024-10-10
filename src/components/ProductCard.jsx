@@ -17,7 +17,6 @@ const ProductCard = ({product}) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
         alert(`${product.name} agregado al carrito con éxito!`);
       } else {
         alert('No se pudo agregar el producto al carrito.');
@@ -49,7 +48,7 @@ const ProductCard = ({product}) => {
       <p className="mt-1 text-gray-700">${product.price}</p>
       </div>
       <button className="mt-2 px-4 py-2 bg-red-600 text-white rounded" onClick={addToCart}>
-        Añadir al carrito
+        Agregar al carrito
       </button>
     </div>
   );

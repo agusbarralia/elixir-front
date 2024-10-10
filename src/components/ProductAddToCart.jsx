@@ -72,7 +72,7 @@ function ProductAddToCart({ price , productId, productName}) {
 
       
       <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}>
-        Add to cart
+        Agregar al carrito
       </button>
     </div>
   );
