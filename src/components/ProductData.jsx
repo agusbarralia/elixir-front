@@ -30,3 +30,4 @@ function ProductData({ category, subCategory, variety, sort, size }) {
 }
 
 export default ProductData;
+
