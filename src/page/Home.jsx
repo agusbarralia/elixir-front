@@ -6,7 +6,7 @@ import { useState,useEffect } from "react";
 const Home = () => {
   const [products, setProducts] = useState([]);
 
-  const url = "http://localhost:8080/products/category?categoryName=vinos";
+  const url = "http://localhost:8080/products";
 
   useEffect(() => {
     fetch(url)
