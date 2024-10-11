@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function ProductAddToCart({ price, productId, productName, discount }) {
   const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   // Convertir el descuento a porcentaje y calcular el precio con descuento si el descuento es mayor a 0.
   const discountPercentage = discount * 100; // Convertir a porcentaje
@@ -19,6 +21,14 @@ function ProductAddToCart({ price, productId, productName, discount }) {
 
   // Función para añadir el producto al carrito.
   const addToCart = async () => {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      alert('Para agregar al carrito, primero se debe iniciar sesión.');
+      navigate('/login');
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`, {
         method: 'POST',
