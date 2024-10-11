@@ -16,7 +16,7 @@ function OrderHistory() {
     fetch(selectedUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+        Authorization: `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
       },
     })
       .then((response) => {
@@ -29,6 +29,31 @@ function OrderHistory() {
       .catch((error) => console.error('Error:', error));
   }, [selectedUrl]);
 
+  // Función para actualizar el estado de la orden
+  const updateOrderState = (orderId) => {
+    fetch(`http://localhost:8080/orders/order/${orderId}/state`, {
+      method: 'PUT', // o PATCH
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      }
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Error al actualizar el estado de la orden');
+        }
+        return response.json();
+      })
+      .then(() => {
+        // Actualizamos el estado local para reflejar el cambio
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order.orderId === orderId ? { ...order, state: 'Finalizada' } : order
+          )
+        );
+      })
+      .catch((error) => console.error('Error:', error));
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl font-bold mb-6">Historial de Pedidos</h2>
@@ -38,14 +63,12 @@ function OrderHistory() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Link
-              key={order.orderId}
-              to={`${selectedEnd}${order.orderId}`} // Construimos la URL sin duplicar
-              className="block border p-4 rounded-lg shadow hover:bg-gray-100 transition-colors"
-            >
-              <h3 className="text-2xl font-semibold">Pedido #{order.orderId}</h3>
-              <p className="text-gray-600">Fecha: {order.order_date || 'Fecha no disponible'}</p>
-              <p className="text-gray-600">Estado: {order.status || 'Estado no disponible'}</p>
+            <div key={order.orderId} className="block border p-4 rounded-lg shadow hover:bg-gray-100 transition-colors">
+              <Link to={`${selectedEnd}${order.orderId}`} className="block">
+                <h3 className="text-2xl font-semibold">Pedido #{order.orderId}</h3>
+                <p className="text-gray-600">Fecha: {order.order_date || 'Fecha no disponible'}</p>
+                <p className="text-gray-600">Estado: {order.state|| 'Estado no disponible'}</p>
+              
 
               <h4 className="text-xl font-semibold mt-4">Detalles del Pedido</h4>
               <ul className="list-disc list-inside">
@@ -65,6 +88,15 @@ function OrderHistory() {
                 <span>${order.total || 0}</span>
               </div>
             </Link>
+              {role === 'ADMIN' && order.state === 'Pending' && (
+                <button
+                  onClick={() => updateOrderState(order.orderId)}
+                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Finalizar
+                </button>
+              )}
+            </div>
           ))}
         </div>
       )}
