@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function AdminEditProduct() {
   const { productId } = useParams();
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState({
     productId: "",
@@ -19,10 +20,6 @@ function AdminEditProduct() {
     categoryId: "",
     imagesList: [], // Para imágenes existentes
   });
-
-  function convertArrayToCommaSeparatedString(array) {
-    return array.join(', ');
-}
 
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -157,11 +154,12 @@ function AdminEditProduct() {
     });
   
     // Agrega las imágenes a remover como texto (URLs o identificadores)
-    const imagesRemoveString = convertArrayToCommaSeparatedString(removedImages);
-    formData.append("imagesRemove", imagesRemoveString);
-  
+    removedImages.forEach((imageId) => {
+      formData.append("imagesRemove", imageId); // Enviamos cada ID como un valor independiente
+    });
+
     try {
-      console.log(imagesRemoveString);
+      console.log(removedImages);
       const response = await fetch("http://localhost:8080/products/admin/update/images", {
         method: "PUT",
         body: formData, // Enviar como form-data
@@ -175,6 +173,7 @@ function AdminEditProduct() {
       }
   
       alert("Imágenes actualizadas con éxito.");
+      navigate('/admin/products');
     } catch (error) {
       console.error("Error:", error);
       alert("Error al actualizar imágenes");
