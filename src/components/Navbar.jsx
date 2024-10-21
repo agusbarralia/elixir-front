@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import CartDropdown from './CartDropdown';
+import SearchBar from './SearchBar';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -97,8 +98,13 @@ const Navbar = () => {
     navigate('/login'); // Redirigir a la página de inicio de sesión
   };
 
+
   const handleUserPageClick = () => {
     navigate('/UserPage');
+  };
+
+  const handleOrders = () => {
+    navigate('/orders'); // Redirigir a la página de inicio de sesión
   };
 
   const isLoggedIn = !!localStorage.getItem('token'); // Verifica si hay un token
@@ -144,11 +150,9 @@ const Navbar = () => {
       </div>
 
       <div className="flex items-center space-x-2 relative">
-        <input
-          type="text"
-          className="px-2 py-1 rounded-md"
-          placeholder="Buscar..."
-        />
+        <SearchBar />
+        
+        {role === 'USER' ? (<button onClick={handleOrders}>Pedidos</button>):(<div></div>)}
 
         {/* Mostrar el carrito solo si el rol no es ADMIN */}
         {role !== 'ADMIN' ? (

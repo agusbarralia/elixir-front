@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function Checkout() {
   const location = useLocation();
-  const cartItems = location.state?.cartItems || []; 
+  const cartItems = location.state?.cartItems || [];
   const navigate = useNavigate();
 
   const [shippingInfo, setShippingInfo] = useState({
@@ -24,11 +24,27 @@ function Checkout() {
     return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
 
+  const handleExpiryDateChange = (e) => {
+    let value = e.target.value.replace(/\D/g, ''); // Elimina cualquier carácter que no sea número
+
+    if (value.length >= 3) {
+      value = `${value.slice(0, 2)}/${value.slice(2, 4)}`; // Inserta '/' entre mes y año
+    }
+
+    setPaymentInfo({ ...paymentInfo, expiryDate: value });
+  };
+
+  const getFormattedExpiryDate = () => {
+    const rawValue = paymentInfo.expiryDate.replace(/\D/g, ''); // Solo números
+    if (rawValue.length <= 2) return rawValue;
+    return `${rawValue.slice(0, 2)}/${rawValue.slice(2, 4)}`; // Formatear para mostrar
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Información de Envío:", shippingInfo);
     console.log("Información de Pago:", paymentInfo);
+    console.log(localStorage.getItem('token')); // Token desde localStorage
     
     fetch('http://localhost:8080/checkout/process', {
       method: 'POST',
@@ -36,16 +52,14 @@ function Checkout() {
         'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
       },
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error en la solicitud de checkout');
-        }
-        return response.json();
-      })
-      .then(() => {
-        navigate('/thankspage');
-      })
-      .catch((error) => console.error("Error al procesar checkout:", error));
+    .then(async (response) => {
+      const data = await response.json(); // Mueve esto dentro del primer then
+      if (!response.ok) {
+        throw new Error('Error en la solicitud de checkout');
+      }
+      console.log('Respuesta del servidor:', data);
+      navigate('/thankspage');
+    })
 
   };
 
@@ -86,7 +100,8 @@ function Checkout() {
                 type="text"
                 placeholder="Código Postal"
                 value={shippingInfo.postalCode}
-                onChange={(e) => setShippingInfo({ ...shippingInfo, postalCode: e.target.value })}
+                maxLength={4}
+                onChange={(e) => setShippingInfo({ ...shippingInfo, postalCode: e.target.value.replace(/\D/g, '') })}
                 className="border p-2 rounded-lg w-full"
                 required
               />
@@ -106,15 +121,19 @@ function Checkout() {
                 type="text"
                 placeholder="Número de Tarjeta"
                 value={paymentInfo.cardNumber}
-                onChange={(e) => setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value })}
+                maxLength={16} // Limitar la longitud a 5 caracteres visibles (incluyendo '/')
+                onChange={(e) =>
+                  setPaymentInfo({ ...paymentInfo, cardNumber: e.target.value.replace(/\D/g, '') })
+                }
                 className="border p-2 rounded-lg w-full"
                 required
               />
               <input
                 type="text"
                 placeholder="Fecha de Expiración (MM/YY)"
-                value={paymentInfo.expiryDate}
-                onChange={(e) => setPaymentInfo({ ...paymentInfo, expiryDate: e.target.value })}
+                value={getFormattedExpiryDate()}
+                onChange={handleExpiryDateChange}
+                maxLength={5} // Limitar la longitud a 5 caracteres visibles (incluyendo '/')
                 className="border p-2 rounded-lg w-full"
                 required
               />
@@ -122,7 +141,10 @@ function Checkout() {
                 type="text"
                 placeholder="CVV"
                 value={paymentInfo.cvv}
-                onChange={(e) => setPaymentInfo({ ...paymentInfo, cvv: e.target.value })}
+                onChange={(e) =>
+                  setPaymentInfo({ ...paymentInfo, cvv: e.target.value.replace(/\D/g, '') })
+                }
+                maxLength={3} // Limitar a 3 dígitos
                 className="border p-2 rounded-lg w-full"
                 required
               />
@@ -142,7 +164,9 @@ function Checkout() {
           <div className="border p-4 rounded-lg mb-4">
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between mb-2">
-                <span>{item.title} x {item.quantity}</span>
+                <span>
+                  {item.title} x {item.quantity}
+                </span>
                 <span>${item.price * item.quantity}</span>
               </div>
             ))}

@@ -5,11 +5,11 @@ function ProductData({ category, subCategory, variety, sort, size }) {
     <div className="mt-8">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <h4 className="font-semibold">Categoria</h4>
+          <h4 className="font-semibold">Bebida</h4>
           <p className="text-gray-600">{category ? category : '-'}</p> 
         </div>
         <div>
-          <h4 className="font-semibold">Color</h4>
+          <h4 className="font-semibold">Tipo de Bebida</h4>
           <p className="text-gray-600">{subCategory ? subCategory : '-'}</p>
         </div>
         <div>
@@ -30,3 +30,4 @@ function ProductData({ category, subCategory, variety, sort, size }) {
 }
 
 export default ProductData;
+

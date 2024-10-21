@@ -92,10 +92,28 @@ function App() {
                     }
                   />
                   <Route
-                  path="/admin/users" 
-                  element={
-                  <AdminUserManagement/>
-                  } 
+                    path="/admin/users" 
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminUserManagement/>
+                      </ProtectedAdminRoute>
+                    } 
+                  />
+                  <Route
+                    path="/admin/orders"
+                    element={
+                      <ProtectedAdminRoute>
+                        <OrderHistory />
+                      </ProtectedAdminRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/orders/:id"
+                    element={
+                      <ProtectedAdminRoute>
+                        <OrderDetail />
+                      </ProtectedAdminRoute>
+                    }
                   />
                 </Routes>
               </div>
@@ -107,14 +125,57 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/product/:productName" element={<ProductPage />} />
                 <Route path="/products/:category" element={<ProductsCategory />} />
-                <Route path="/cart" element={<Cart />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/orders" element={<OrderHistory />} />
-                <Route path="/order/:id" element={<OrderDetail />} />
-                <Route path="/thankspage" element={<ThankPage />} />
-                <Route path="/userpage" element={<UserPage/>} />
+                <Route
+                  path="/cart" 
+                  element={
+                    <ProtectedRoute>
+                      <Cart />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                <Route 
+                  path="/checkout" 
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="/orders" 
+                  element={
+                    <ProtectedRoute>
+                      <OrderHistory />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="/orders/:id" 
+                  element={
+                    <ProtectedRoute>
+                      <OrderDetail />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="/thankspage" 
+                  element={
+                  <ProtectedRoute>
+                    <ThankPage />
+                  </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="/userpage" 
+                  element={
+                  <ProtectedRoute>
+                    <UserPage />
+                  </ProtectedRoute>
+                  }
+                />
               </Routes>
             </>
           )}
