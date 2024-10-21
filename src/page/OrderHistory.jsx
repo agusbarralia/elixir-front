@@ -88,7 +88,7 @@ function OrderHistory() {
                 <span>${order.total || 0}</span>
               </div>
             </Link>
-              {role === 'ADMIN' && order.state === 'Pending' && (
+              {role === 'ADMIN' && order.state === 'Pendiente' && (
                 <button
                   onClick={() => updateOrderState(order.orderId)}
                   className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"

@@ -60,11 +60,6 @@ const Navbar = () => {
     fetchCartItems(); // Llamar al montar el componente
   }, []);
 
-  /*const cartItems = [
-    { id: 1, title: 'Bermuda BROOKLYN', price: 45100, quantity: 1 },
-    { id: 2, title: 'Remera OVER', price: 22300, quantity: 1 },
-  ];*/
-
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const categories = [

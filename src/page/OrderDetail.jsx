@@ -60,7 +60,11 @@ function OrderDetail() {
               <tr key={item.productOrderId}>
                 <td className="border px-4 py-2">
                   <img
-                    src={`data:image/jpeg;base64,${item.productDTO.imagesList[0].imageData}`} // Imagen del producto en base64
+                    src={
+                      item.productDTO.imagesList && item.productDTO.imagesList.length > 0
+                        ? `data:image/jpeg;base64,${item.productDTO.imagesList[0].imageData}`
+                        : '/placeholder.jpg'
+                    }
                     alt={item.productDTO.name}
                     className="w-20 h-20 object-cover"
                   />

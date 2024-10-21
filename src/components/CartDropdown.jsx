@@ -1,10 +1,15 @@
 /* eslint-disable react/prop-types */
 // src/components/CartDropdown.jsx
-import React from 'react';
+import { useState, React, useEffect } from 'react';
 
 const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClick, isCartHovered, handleCartMouseEnter, handleCartMouseLeave }) => {
 
-    const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    const [totalQuantity, setTotalQuantity] = useState(0);
+
+    useEffect(() => {
+        const quantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+        setTotalQuantity(quantity);
+    }, [cartItems]);
 
     return (
         <div 
@@ -14,14 +19,14 @@ const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClic
         >
         <button className="text-lg " onClick={handleCartClick}>
             🛒
-            {cartItems.length > 0 && (
+            {/*cartItems.length > 0 && (
             <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1">
                 {totalQuantity}
             </span>
-            )}
+            )*/}
         </button>
         
-        {isCartHovered && (
+        {/*isCartHovered && (
             <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-64 bg-white text-black rounded-lg shadow-lg p-4 z-10">
             <h3 className="font-bold mb-2">Carrito / ${subtotal.toLocaleString()}</h3>
             <ul className="max-h-40 overflow-y-auto mb-2">
@@ -42,7 +47,7 @@ const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClic
                 Finalizar compra
             </button>
             </div>
-        )}
+        )*/}
         </div>
     );
 };
