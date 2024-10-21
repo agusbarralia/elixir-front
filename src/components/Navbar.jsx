@@ -98,6 +98,11 @@ const Navbar = () => {
     navigate('/login'); // Redirigir a la página de inicio de sesión
   };
 
+
+  const handleUserPageClick = () => {
+    navigate('/UserPage');
+  };
+
   const handleOrders = () => {
     navigate('/orders'); // Redirigir a la página de inicio de sesión
   };
@@ -170,6 +175,7 @@ const Navbar = () => {
           <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
         )}
       </div>
+      <button onClick={handleUserPageClick}>Mis Datos</button>
     </nav>
   );
 };

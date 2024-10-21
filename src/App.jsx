@@ -21,6 +21,8 @@ import ProtectedAdminRoute from './components/ProtectedAdminRoute';
 import AdminEditProduct from './page/AdminEditProduct';
 import AdminCategories from './page/AdminCategories';
 import ThankPage from './page/ThankPage';
+import UserPage from './page/UserPage';
+import AdminUserManagement from './page/AdminUserManagement';
 
 
 function ScrollToTop() {
@@ -90,6 +92,14 @@ function App() {
                     }
                   />
                   <Route
+                    path="/admin/users" 
+                    element={
+                      <ProtectedAdminRoute>
+                        <AdminUserManagement/>
+                      </ProtectedAdminRoute>
+                    } 
+                  />
+                  <Route
                     path="/admin/orders"
                     element={
                       <ProtectedAdminRoute>
@@ -105,7 +115,6 @@ function App() {
                       </ProtectedAdminRoute>
                     }
                   />
-                  {/* Otras rutas de administración */}
                 </Routes>
               </div>
             </div>
@@ -156,6 +165,14 @@ function App() {
                   element={
                   <ProtectedRoute>
                     <ThankPage />
+                  </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="/userpage" 
+                  element={
+                  <ProtectedRoute>
+                    <UserPage />
                   </ProtectedRoute>
                   }
                 />
