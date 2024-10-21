@@ -2,15 +2,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function ProductAddToCart({ price, productId, productName, discount }) {
+function ProductAddToCart({ price, productId, productName, discount, stock }) {
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
   // Convertir el descuento a porcentaje y calcular el precio con descuento si el descuento es mayor a 0.
   const discountPercentage = discount * 100; // Convertir a porcentaje
   const discountedPrice = discount > 0 ? (price * (1 - discount)).toFixed(2) : price; // Calcular precio con descuento
-  console.log(discount);
-  console.log(discountedPrice); 
+
   // Función para actualizar la cantidad basada en un incremento o decremento.
   const changeQuantity = (delta) => {
     setQuantity((prevQuantity) => {
@@ -99,10 +98,14 @@ function ProductAddToCart({ price, productId, productName, discount }) {
         </button>
       </div>
 
-      {/* Botón para agregar al carrito */}
-      <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}> 
-        Agregar al Carrito
-      </button>
+      {/* Verificar stock y mostrar el botón o el mensaje correspondiente */}
+      {stock > 0 ? (
+        <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}> 
+          Agregar al Carrito
+        </button>
+      ) : (
+        <p className="mt-2 text-red-600 font-bold">No hay stock del producto</p>
+      )}
     </div>
   );
 }

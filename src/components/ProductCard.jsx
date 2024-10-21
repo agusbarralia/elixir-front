@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
 
   const addToCart = async () => {
     const token = localStorage.getItem('token');
-    
+
     if (!token) {
       alert('Para agregar al carrito, primero se debe iniciar sesión.');
       navigate('/login');
@@ -65,9 +65,13 @@ const ProductCard = ({ product }) => {
           <p className="mt-1 text-gray-700">${product.price.toFixed(2)}</p>
         )}
       </div>
-      <button className="mt-2 px-4 py-2 bg-red-600 text-white rounded" onClick={addToCart}>
-        Agregar al carrito
-      </button>
+      {product.stock > 0 ? (
+        <button className="mt-2 px-4 py-2 bg-red-600 text-white rounded" onClick={addToCart}>
+          Agregar al carrito
+        </button>
+      ) : (
+        <p className="mt-2 text-red-600 font-bold">No hay stock</p>
+      )}
     </div>
   );
 };

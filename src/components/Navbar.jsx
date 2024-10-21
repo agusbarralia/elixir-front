@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import CartDropdown from './CartDropdown';
 import SearchBar from './SearchBar';
@@ -10,13 +10,15 @@ const Navbar = () => {
   const [timeoutId, setTimeoutId] = useState(null);
   const [cartTimeoutId, setCartTimeoutId] = useState(null);
   const [cartItems, setCartItems] = useState([]);
+  const [categories, setCategories] = useState([]); // Estado para las categorías
+  const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
   const handleCartClick = () => {
     navigate('/cart');
   };
 
-  const handleCategoryClick = (Categoria) => {
-    navigate(`/products/${Categoria.toLowerCase()}`);
+  const handleCategoryClick = (category) => {
+    navigate(`/products/${category.toLowerCase()}`);
   };
 
   const handleCheckoutClick = () => {
@@ -38,7 +40,6 @@ const Navbar = () => {
       }
 
       const data = await response.json();
-      
       const formattedItems = data.productsCart.map((item) => ({
         id: item.product_id,
         name: item.name,
@@ -48,50 +49,41 @@ const Navbar = () => {
       }));
 
       setCartItems(formattedItems);
-      setLoading(false);
       
     } catch (error) {
-      setError(error.message);
-      setLoading(false);
+      console.error(error);
     }
   };
-  
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/categories', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('No se pudo recuperar las categorías');
+      }
+
+      const data = await response.json();
+      setCategories(data); // Asumimos que data es un array de categorías
+      setLoading(false); // Marcar como cargado
+      
+    } catch (error) {
+      console.error(error);
+      setLoading(false); // Marcar como cargado incluso si hubo un error
+    }
+  };
+
   useEffect(() => {
     fetchCartItems(); // Llamar al montar el componente
+    fetchCategories(); // Llamar al montar el componente
   }, []);
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const categories = [
-    {
-      title: 'Vinos',
-      subcategories: [
-        { title: 'Tintos', variants: ['Malbec', 'Cabernet Sauvignon', 'Syrah'] },
-        { title: 'Blancos', variants: ['Chardonnay', 'Sauvignon Blanc', 'Riesling'] },
-      ],
-    },
-    {
-      title: 'Cervezas',
-      subcategories: [
-        { title: 'Rubias', variants: ['Lager', 'Pale Ale', 'Blonde Ale'] },
-        { title: 'Negras', variants: ['Stout', 'Porter', 'Brown Ale'] },
-      ],
-    },
-    {
-      title: 'Licores',
-      subcategories: [
-        { title: 'Whiskies', variants: ['Escocés', 'Irlandés', 'Americano'] },
-        { title: 'Rones', variants: ['Añejo', 'Blanco', 'Oscuro'] },
-      ],
-    },
-    {
-      title: 'Vodkas',
-      subcategories: [
-        { title: 'Saborizados', variants: ['Frutos Rojos', 'Limón', 'Pepino'] },
-        { title: 'Clásicos', variants: ['Ruso', 'Polaco'] },
-      ],
-    }
-  ];
 
   const handleVariantClick = (categoryTitle, subcategoryTitle, variant) => {
     navigate(`/products?category=${categoryTitle}&subcategory=${subcategoryTitle}&variant=${variant}`);
@@ -105,7 +97,7 @@ const Navbar = () => {
   const handleMouseLeave = () => {
     const id = setTimeout(() => {
       setActiveCategory(null);
-    }, 200); // Tiempo en milisegundos
+    }, 200);
     setTimeoutId(id);
   };
 
@@ -121,26 +113,28 @@ const Navbar = () => {
     setCartTimeoutId(id);
   };
 
-  // Obtener el rol del usuario del local storage
   const role = localStorage.getItem('role');
 
-  // Manejar el cierre de sesión
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Eliminar el token del local storage
-    localStorage.removeItem('role'); // Eliminar el rol (opcional)
-    navigate('/login'); // Redirigir a la página de inicio de sesión
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    navigate('/login');
   };
-
 
   const handleUserPageClick = () => {
     navigate('/UserPage');
   };
 
   const handleOrders = () => {
-    navigate('/orders'); // Redirigir a la página de inicio de sesión
+    navigate('/orders');
   };
 
-  const isLoggedIn = !!localStorage.getItem('token'); // Verifica si hay un token
+  const isLoggedIn = !!localStorage.getItem('token');
+
+  // Condición para renderizar mientras se cargan las categorías
+  if (loading) {
+    return <div className="loader">Cargando...</div>; // Puedes personalizar el loader
+  }
 
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
@@ -156,9 +150,9 @@ const Navbar = () => {
             onMouseEnter={() => handleMouseEnter(index)} 
             onMouseLeave={handleMouseLeave}
           >
-            <button onClick={() => handleCategoryClick(category.title)} className="hover:text-gray-400">{category.title}</button>
+            <button onClick={() => handleCategoryClick(category.name)} className="hover:text-gray-400">{category.name}</button>
             
-            {activeCategory === index && (
+            {/*activeCategory === index && (
               <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white text-black rounded-lg shadow-lg p-4 z-10">
                 {category.subcategories.map((subcategory, subIndex) => (
                   <div key={subIndex} className="mb-1">
@@ -177,7 +171,7 @@ const Navbar = () => {
                   </div>
                 ))}
               </div>
-            )}
+            )*/}
           </div>
         ))}
       </div>
@@ -187,7 +181,6 @@ const Navbar = () => {
         
         {role === 'USER' ? (<button onClick={handleOrders}>Pedidos</button>):(<div></div>)}
 
-        {/* Mostrar el carrito solo si el rol no es ADMIN */}
         {role !== 'ADMIN' ? (
           <div className='flex flex-row items-center space-x-2'>
           <CartDropdown 
@@ -201,7 +194,7 @@ const Navbar = () => {
           />
           {isLoggedIn ? (
           <button onClick={handleUserPageClick}>Mis Datos</button>
-        ) : () => {}}
+        ) : null}
           </div>
         ) : (
           <a href="/admin/products" className="hover:text-gray-400">Administración</a>
