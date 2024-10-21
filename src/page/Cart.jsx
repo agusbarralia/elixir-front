@@ -5,6 +5,7 @@ function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null); 
+  const [successMessage, setSuccessMessage] = useState(null); // Estado para mensajes de éxito
   const navigate = useNavigate();
 
   const fetchCartItems = async () => {
@@ -43,11 +44,7 @@ function Cart() {
     try {
       const formData = new FormData();
       formData.append('productId', parseInt(id));
-      formData.append('quantity', parseInt(newQuantity) );
-
-      for (let pair of formData.entries()) {
-        console.log(`${pair[0]}: ${pair[1]}`);
-      }
+      formData.append('quantity', parseInt(newQuantity));
 
       const response = await fetch('http://localhost:8080/cart/update', {
         method: 'PUT',
@@ -58,7 +55,10 @@ function Cart() {
       });
 
       if (!response.ok) {
-        throw new Error('Error al actualizar la cantidad');
+        const errorData = await response.json();
+        alert(errorData.message || 'Error al actualizar la cantidad'); // Mostrar alerta con el mensaje de error
+        setSuccessMessage(null); // Limpiar mensaje de éxito en caso de error
+        return; // Salir de la función si hay un error
       }
 
       const data = await response.text();
@@ -68,9 +68,14 @@ function Cart() {
       setCartItems(cartItems.map(item =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       ));
+      setSuccessMessage('Cantidad actualizada exitosamente')
+      setTimeout(() => {
+        setSuccessMessage(''); 
+      }, 3000);
     } catch (error) {
       console.error('Error:', error);
-      setError(error.message);
+      setError(error.message); // Guardar el mensaje de error
+      setSuccessMessage(null); // Limpiar mensaje de éxito en caso de error
     }
   };
 
@@ -106,7 +111,6 @@ function Cart() {
       setError(error.message);
       setLoading(false);
     }
-
   }
 
   useEffect(() => {
@@ -136,7 +140,7 @@ function Cart() {
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl mb-4">Tu Carrito</h2>
-
+      {successMessage && <p className="text-green-500">{successMessage}</p>} {/* Mensaje de éxito */}
       {cartItems.length === 0 ? (
         <p>Tu carrito está vacío.</p>
       ) : (
