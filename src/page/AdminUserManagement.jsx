@@ -5,51 +5,47 @@ const AdminUserManagement = () => {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
 
-    // Función para obtener todos los usuarios
     const fetchUsers = async () => {
         try {
-            const response = await fetch('/users/admin/users', {
+            const response = await fetch('http://localhost:8080/users/admin/users', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json',
                 },
             });
-            if (!response.ok) {
-                throw new Error('Error fetching users');
+
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
             }
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new TypeError("La respuesta no es JSON");
-            }
+
+            if (!response.ok) throw new Error('Error fetching users');
+
             const data = await response.json();
             setUsers(data);
         } catch (error) {
             console.error(error);
-            // Manejo de errores (ej. redirigir al login si no está autenticado)
-            if (error.message === 'Error fetching users') {
-                navigate('/login'); // Redirigir al login si hay un error
-            }
         }
     };
-    // Función para activar/desactivar un usuario
+
     const toggleUserState = async (user) => {
         try {
-            const response = await fetch(`/users/admin/users`, {
+            const UserFormData = new FormData();
+            UserFormData.append('userId', user.id);
+
+            const response = await fetch('http://localhost:8080/users/admin/changeState', {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ user_id: user.username, state: !user.state }),
+                body: UserFormData,
             });
-            if (!response.ok) {
-                throw new Error('Error updating user state');
-            }
+
+            if (!response.ok) throw new Error('Error updating user state');
             fetchUsers();
         } catch (error) {
             console.error(error);
-            // Manejo de errores
         }
     };
 
@@ -58,29 +54,36 @@ const AdminUserManagement = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Gestión de Usuarios</h1>
-            <table>
+        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+            <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
+            <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                    <tr>
-                        <th>Nombre de Usuario</th>
-                        <th>Email</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
+                    <tr className="bg-gray-100">
+                        <th className="border px-4 py-2">Usuario</th>
+                        <th className="border px-4 py-2">Email</th>
+                        <th className="border px-4 py-2">Nombre</th>
+                        <th className="border px-4 py-2">Apellido</th>
+                        <th className="border px-4 py-2">Estado</th>
+                        <th className="border px-4 py-2">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map(user => (
+                    {users.map((user) => (
                         <tr key={user.username}>
-                            <td>{user.username}</td>
-                            <td>{user.email}</td>
-                            <td>{user.name}</td>
-                            <td>{user.last_name}</td>
-                            <td>{user.state ? 'Activo' : 'Inactivo'}</td>
-                            <td>
-                                <button onClick={() => toggleUserState(user)}>
+                            <td className="border px-4 py-2">{user.username}</td>
+                            <td className="border px-4 py-2">{user.email}</td>
+                            <td className="border px-4 py-2">{user.name}</td>
+                            <td className="border px-4 py-2">{user.last_name}</td>
+                            <td className="border px-4 py-2">
+                                {user.state ? 'Activo' : 'Inactivo'}
+                            </td>
+                            <td className="border px-4 py-2">
+                                <button
+                                    onClick={() => toggleUserState(user)}
+                                    className={`px-4 py-2 rounded-md text-white ${
+                                        user.state ? 'bg-red-600' : 'bg-green-600'
+                                    } hover:opacity-75`}
+                                >
                                     {user.state ? 'Desactivar' : 'Activar'}
                                 </button>
                             </td>
@@ -88,16 +91,6 @@ const AdminUserManagement = () => {
                     ))}
                 </tbody>
             </table>
-            <ul>
-                {users.map(user => (
-                    <li key={user.username}>
-                        {user.name} {user.last_name} - {user.state ? 'Activo' : 'Inactivo'}
-                        <button onClick={() => toggleUserState(user)}>
-                            {user.state ? 'Desactivar' : 'Activar'}
-                        </button>
-                    </li>
-                ))}
-            </ul>
         </div>
     );
 };

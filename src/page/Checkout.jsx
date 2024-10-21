@@ -165,7 +165,7 @@ function Checkout() {
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between mb-2">
                 <span>
-                  {item.title} x {item.quantity}
+                  {item.title} x {item.quantity} - {item.name}
                 </span>
                 <span>${item.price * item.quantity}</span>
               </div>

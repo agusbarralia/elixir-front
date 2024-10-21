@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import CartDropdown from './CartDropdown';
 import SearchBar from './SearchBar';
@@ -9,6 +9,7 @@ const Navbar = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
   const [cartTimeoutId, setCartTimeoutId] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
 
   const handleCartClick = () => {
     navigate('/cart');
@@ -22,10 +23,47 @@ const Navbar = () => {
     navigate('/checkout');
   };
 
-  const cartItems = [
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/cart', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('No se pudo recuperar el carrito');
+      }
+
+      const data = await response.json();
+      
+      const formattedItems = data.productsCart.map((item) => ({
+        id: item.product_id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.unit_price,
+        subtotal: item.subtotal,
+      }));
+
+      setCartItems(formattedItems);
+      setLoading(false);
+      
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchCartItems(); // Llamar al montar el componente
+  }, []);
+
+  /*const cartItems = [
     { id: 1, title: 'Bermuda BROOKLYN', price: 45100, quantity: 1 },
     { id: 2, title: 'Remera OVER', price: 22300, quantity: 1 },
-  ];
+  ];*/
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
@@ -156,8 +194,9 @@ const Navbar = () => {
 
         {/* Mostrar el carrito solo si el rol no es ADMIN */}
         {role !== 'ADMIN' ? (
+          <div className='flex flex-row items-center space-x-2'>
           <CartDropdown 
-            cartItems={cartItems} 
+            cartItems={cartItems}
             handleCartClick={handleCartClick} 
             handleCartMouseEnter={handleCartMouseEnter} 
             handleCartMouseLeave={handleCartMouseLeave} 
@@ -165,6 +204,10 @@ const Navbar = () => {
             subtotal={subtotal} 
             handleCheckoutClick={handleCheckoutClick}
           />
+          {isLoggedIn ? (
+          <button onClick={handleUserPageClick}>Mis Datos</button>
+        ) : () => {}}
+          </div>
         ) : (
           <a href="/admin/products" className="hover:text-gray-400">Administración</a>
         )}
@@ -175,7 +218,7 @@ const Navbar = () => {
           <a href="/login" className="hover:text-gray-400">Iniciar Sesión</a>
         )}
       </div>
-      <button onClick={handleUserPageClick}>Mis Datos</button>
+
     </nav>
   );
 };

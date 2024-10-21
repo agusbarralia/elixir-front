@@ -5,7 +5,7 @@ function Filters({ products, setFilteredProducts }) {
   const [varieties, setVarieties] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [selectedVarieties, setSelectedVarieties] = useState([]);
-  const [priceRange, setPriceRange] = useState(5000); // Estado para reflejar el valor del slider
+  const [priceRange, setPriceRange] = useState(50000); // Estado para reflejar el valor del slider
 
   // Extraer subcategorías y variedades únicas al recibir los productos
   useEffect(() => {

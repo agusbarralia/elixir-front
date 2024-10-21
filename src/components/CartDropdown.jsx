@@ -3,6 +3,9 @@
 import React from 'react';
 
 const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClick, isCartHovered, handleCartMouseEnter, handleCartMouseLeave }) => {
+
+    const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
     return (
         <div 
         className="relative" 
@@ -13,7 +16,7 @@ const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClic
             🛒
             {cartItems.length > 0 && (
             <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1">
-                {cartItems.length}
+                {totalQuantity}
             </span>
             )}
         </button>
@@ -23,7 +26,7 @@ const CartDropdown = ({ cartItems, subtotal, handleCartClick, handleCheckoutClic
             <h3 className="font-bold mb-2">Carrito / ${subtotal.toLocaleString()}</h3>
             <ul className="max-h-40 overflow-y-auto mb-2">
                 {cartItems.map(item => (
-                <li key={item.id}>{item.name} - ${item.price}</li>
+                <li key={item.id}>{item.quantity} - {item.name} - ${item.price}</li>
                 ))}
             </ul>
             <button 
