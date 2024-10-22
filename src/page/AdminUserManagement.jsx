@@ -54,22 +54,22 @@ const AdminUserManagement = () => {
     }, []);
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-            <h1 className="text-2xl font-bold mb-6">Gestión de Usuarios</h1>
+        <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+            <h1 className="text-3xl font-bold mb-6 text-center">Gestión de Usuarios</h1>
             <table className="w-full border-collapse border border-gray-300">
                 <thead>
-                    <tr className="bg-gray-100">
-                        <th className="border px-4 py-2">Usuario</th>
-                        <th className="border px-4 py-2">Email</th>
-                        <th className="border px-4 py-2">Nombre</th>
-                        <th className="border px-4 py-2">Apellido</th>
-                        <th className="border px-4 py-2">Estado</th>
-                        <th className="border px-4 py-2">Acciones</th>
+                    <tr className="bg-gray-200">
+                        <th className="border px-4 py-2 text-left">Usuario</th>
+                        <th className="border px-4 py-2 text-left">Email</th>
+                        <th className="border px-4 py-2 text-left">Nombre</th>
+                        <th className="border px-4 py-2 text-left">Apellido</th>
+                        <th className="border px-4 py-2 text-left">Estado</th>
+                        <th className="border px-4 py-2 text-left">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {users.map((user) => (
-                        <tr key={user.username}>
+                        <tr key={user.username} className="hover:bg-gray-100 transition duration-200">
                             <td className="border px-4 py-2">{user.username}</td>
                             <td className="border px-4 py-2">{user.email}</td>
                             <td className="border px-4 py-2">{user.name}</td>
@@ -80,9 +80,8 @@ const AdminUserManagement = () => {
                             <td className="border px-4 py-2">
                                 <button
                                     onClick={() => toggleUserState(user)}
-                                    className={`px-4 py-2 rounded-md text-white ${
-                                        user.state ? 'bg-red-600' : 'bg-green-600'
-                                    } hover:opacity-75`}
+                                    className={`px-4 py-2 rounded-md text-white transition duration-200 
+                                    ${user.state ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'}`}
                                 >
                                     {user.state ? 'Desactivar' : 'Activar'}
                                 </button>

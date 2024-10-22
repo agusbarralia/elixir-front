@@ -70,25 +70,22 @@ const AdminProduct = () => {
   const handleApplyDiscount = async (product_id) => {
     const formData = new FormData();
     formData.append('product_id', product_id);
-    formData.append('discount', parseFloat(discountValue/100)); // Asegúrate de que sea un número
-  
+    formData.append('discount', parseFloat(discountValue / 100)); // Asegúrate de que sea un número
+
     try {
       const response = await fetch(`http://localhost:8080/products/admin/update/discount`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
-          // No establezcas 'Content-Type'
         },
         body: formData, // Aquí pasas el formData
       });
-  
+
       if (response.ok) {
-        //hacer algo para que el usuario sepa que OK
         fetchProducts();
         setShowDiscountDialog(false);
         setDiscountValue('');
       }
-
     } catch (error) {
       console.error('Error applying discount:', error);
     }
@@ -96,37 +93,39 @@ const AdminProduct = () => {
 
   return (
     <div className="flex-1 bg-gray-100 p-6">
-      <h2 className="text-2xl mb-4">Lista de Productos</h2>
+      <h2 className="text-3xl font-semibold mb-4">Lista de Productos</h2>
       <button 
         onClick={handleAddProduct}
-        className="mb-4 bg-blue-500 text-white px-4 py-2 rounded">
+        className="mb-4 bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-500 transition">
         Agregar Producto
       </button>
       
-      <table className="min-w-full bg-white border border-gray-300">
-        <thead>
+      <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+        <thead className="bg-gray-200">
           <tr>
-            <th className="py-2 border-b">ID</th>
-            <th className="py-2 border-b">Nombre</th>
-            <th className="py-2 border-b">Precio</th>
-            <th className="py-2 border-b">Stock</th>
-            <th className="py-2 border-b">Acciones</th>
+            <th className="py-3 px-4 text-left">ID</th>
+            <th className="py-3 px-4 text-left">Nombre</th>
+            <th className="py-3 px-4 text-left">Precio</th>
+            <th className="py-3 px-4 text-left">Stock</th>
+            <th className="py-3 px-4 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {products.map(product => (
-            <tr key={product.productId}>
-              <td className="py-2 border-b">{product.productId}</td>
-              <td className="py-2 border-b">{product.name}</td>
-              <td className="py-2 border-b">{product.price}</td>
-              <td className="py-2 border-b">{product.stock}</td>
-              <td className="py-2 border-b">
-                <button onClick={() => handleEditProduct(product.productId)} className="bg-yellow-500 text-white px-2 py-1 rounded">
+            <tr key={product.productId} className="border-b hover:bg-gray-50">
+              <td className="py-2 px-4">{product.productId}</td>
+              <td className="py-2 px-4">{product.name}</td>
+              <td className="py-2 px-4">$ {product.price.toFixed(2)}</td>
+              <td className="py-2 px-4">{product.stock}</td>
+              <td className="py-2 px-4 flex space-x-2">
+                <button 
+                  onClick={() => handleEditProduct(product.productId)} 
+                  className="bg-yellow-500 text-white px-2 py-1 rounded shadow hover:bg-yellow-400 transition">
                   Editar
                 </button>
                 <button 
                   onClick={() => confirmDeleteProduct(product.productId)} 
-                  className="bg-red-500 text-white px-2 py-1 rounded ml-2">
+                  className="bg-red-500 text-white px-2 py-1 rounded shadow hover:bg-red-400 transition">
                   Eliminar
                 </button>
                 <button 
@@ -134,7 +133,7 @@ const AdminProduct = () => {
                     setSelectedProductId(product.productId);
                     setShowDiscountDialog(true);
                   }} 
-                  className="bg-green-500 text-white px-2 py-1 rounded ml-2">
+                  className="bg-green-500 text-white px-2 py-1 rounded shadow hover:bg-green-400 transition">
                   Aplicar Descuento
                 </button>
               </td>
@@ -171,19 +170,19 @@ const AdminProduct = () => {
               type="number"
               value={discountValue}
               onChange={(e) => setDiscountValue(e.target.value)}
-              placeholder="Valor del descuento"
-              className="border px-4 py-2 rounded mt-2"
+              placeholder="Valor del descuento (%)"
+              className="border border-gray-300 px-4 py-2 rounded mt-2 w-full"
               required
             />
-            <div className="mt-4">
+            <div className="mt-4 flex justify-end">
               <button 
                 onClick={() => handleApplyDiscount(selectedProductId)} 
-                className="bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-500 transition mr-2">
                 Aplicar
               </button>
               <button 
                 onClick={() => setShowDiscountDialog(false)} 
-                className="bg-gray-300 text-black px-4 py-2 rounded">
+                className="bg-gray-300 text-black px-4 py-2 rounded shadow hover:bg-gray-400 transition">
                 Cancelar
               </button>
             </div>

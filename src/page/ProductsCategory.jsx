@@ -31,15 +31,14 @@ function ProductsCategory() {
 
   return (
     <div>
-      <h2 className='text-4xl mb-6'>{capitalizeFirstLetter(category)}</h2>
-      
+      <h2 className='text-4xl mb-6 text-center font-bold text-gray-800'>
+        {capitalizeFirstLetter(category)}
+      </h2>      
       <div className='flex'>
-        {/* Pasar los productos y la función de actualización al componente Filters */}
         <Filters products={products} setFilteredProducts={setFilteredProducts} />
         
         <section className="flex-grow p-4 bg-gray-100">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Mostrar los productos filtrados */}
             {filteredProducts.map((product) => (
                 <ProductCard 
                   product={product} 

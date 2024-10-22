@@ -44,34 +44,38 @@ const ProductCard = ({ product }) => {
   const discountedPrice = discount > 0 ? (product.price * (1 - discount)).toFixed(2) : product.price;
 
   return (
-    <div className="bg-white p-4 rounded text-center hover:cursor-pointer hover:bg-gray-100">
-      <div onClick={() => navigate(`/product/${product.name}`, { state: { product } })}>
+    <div className="bg-white shadow-md rounded-lg overflow-hidden transform transition-transform duration-200 hover:scale-105 w-64 h-auto">
+      <div onClick={() => navigate(`/product/${product.name}`, { state: { product } })} className="cursor-pointer">
         <img
           src={imageUrl}
           alt={product.name}
-          className="w-full h-32 object-cover rounded-md"
+          className="w-full h-48 object-cover"
           onError={(e) => (e.target.src = "/placeholder.jpg")}
         />
-        <h3 className="mt-2">{product.name}</h3>
-        
-        {discount > 0 ? (
-          <div>
-            <p className="mt-1 text-gray-500 line-through">${product.price.toFixed(2)}</p>
-            <p className="mt-1 text-red-600 font-bold">
-              ${discountedPrice} ({discountPercentage.toFixed(0)}% OFF)
-            </p>
-          </div>
+        <div className="p-4 text-center">
+          <h3 className="text-lg font-semibold text-gray-800">{product.name}</h3>
+          
+          {discount > 0 ? (
+            <div>
+              <p className="mt-1 text-gray-500 line-through">${product.price.toFixed(2)}</p>
+              <p className="mt-1 text-red-600 font-bold">
+                ${discountedPrice} <span className="text-sm text-gray-500">({discountPercentage.toFixed(0)}% OFF)</span>
+              </p>
+            </div>
+          ) : (
+            <p className="mt-1 text-gray-700 font-medium">${product.price.toFixed(2)}</p>
+          )}
+        </div>
+      </div>
+      <div className="p-4">
+        {product.stock > 0 ? (
+          <button className="w-full px-4 py-2 bg-red-600 text-white rounded transition duration-200 hover:bg-red-700" onClick={addToCart}>
+            Agregar al carrito
+          </button>
         ) : (
-          <p className="mt-1 text-gray-700">${product.price.toFixed(2)}</p>
+          <p className="text-center text-red-600 font-bold">No hay stock</p>
         )}
       </div>
-      {product.stock > 0 ? (
-        <button className="mt-2 px-4 py-2 bg-red-600 text-white rounded" onClick={addToCart}>
-          Agregar al carrito
-        </button>
-      ) : (
-        <p className="mt-2 text-red-600 font-bold">No hay stock</p>
-      )}
     </div>
   );
 };

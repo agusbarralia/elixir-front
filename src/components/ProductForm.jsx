@@ -17,7 +17,7 @@ function ProductForm({ baseUrl, role, token }) {
     const [varieties, setVarieties] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [successMessage, setSuccessMessage] = useState(''); // Nuevo estado para el mensaje
+    const [successMessage, setSuccessMessage] = useState('');
 
     useEffect(() => {
         const fetchVarieties = async () => {
@@ -84,10 +84,8 @@ function ProductForm({ baseUrl, role, token }) {
             const data = await response.json();
             console.log('Producto creado:', data);
 
-            // Mostrar el mensaje de éxito
             setSuccessMessage('Producto creado exitosamente');
 
-            // Limpiar el formulario
             setNewProduct({
                 name: '',
                 product_description: '',
@@ -99,25 +97,23 @@ function ProductForm({ baseUrl, role, token }) {
                 images: [],
             });
 
-            // Limpiar el mensaje después de 3 segundos
             setTimeout(() => setSuccessMessage(''), 3000);
-
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
     return (
-        <div>
-            <form className="mb-8" onSubmit={handleCreateProduct}>
-                <h2 className="text-2xl mb-4">Crear Producto</h2>
+        <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Crear Producto</h2>
 
+            <form className="space-y-4" onSubmit={handleCreateProduct}>
                 <input
                     name="name"
                     value={newProduct.name}
                     onChange={handleInputChange}
                     placeholder="Nombre"
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
 
@@ -126,7 +122,7 @@ function ProductForm({ baseUrl, role, token }) {
                     value={newProduct.product_description}
                     onChange={handleInputChange}
                     placeholder="Descripción"
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
 
@@ -136,7 +132,7 @@ function ProductForm({ baseUrl, role, token }) {
                     value={newProduct.price}
                     onChange={handleInputChange}
                     placeholder="Precio"
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
 
@@ -146,14 +142,15 @@ function ProductForm({ baseUrl, role, token }) {
                     value={newProduct.stock}
                     onChange={handleInputChange}
                     placeholder="Stock"
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
+
                 <select
                     name="categoryId"
                     value={newProduct.categoryId}
                     onChange={handleInputChange}
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 >
                     <option value="">Seleccione una bebida</option>
@@ -168,7 +165,7 @@ function ProductForm({ baseUrl, role, token }) {
                     name="subCategoryId"
                     value={newProduct.subCategoryId}
                     onChange={handleInputChange}
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 >
                     <option value="">Seleccione un tipo de bebida</option>
@@ -183,7 +180,7 @@ function ProductForm({ baseUrl, role, token }) {
                     name="varietyId"
                     value={newProduct.varietyId}
                     onChange={handleInputChange}
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 >
                     <option value="">Seleccione una variedad de bebida</option>
@@ -194,26 +191,22 @@ function ProductForm({ baseUrl, role, token }) {
                     ))}
                 </select>
 
-                
-
-                
-
                 <input
                     type="file"
                     name="images"
                     multiple
                     onChange={handleImageChange}
-                    className="border p-2 mb-2 block"
+                    className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none"
                 />
 
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2">
+                <button type="submit" className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
                     Crear Producto
                 </button>
             </form>
 
             {/* Mensaje de éxito */}
             {successMessage && (
-                <div className="bg-green-500 text-white p-2 mb-4">
+                <div className="bg-green-500 text-white p-2 mt-4 rounded-lg text-center">
                     {successMessage}
                 </div>
             )}

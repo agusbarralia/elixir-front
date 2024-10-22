@@ -1,27 +1,33 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-
 function OrderDetail() {
   const { id } = useParams();
   const [orderData, setOrderData] = useState(null); // Cambiado a null para manejar mejor la carga inicial
   const url = `http://localhost:8080/orders/order/${id}`;
 
   useEffect(() => {
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
-      },
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Error al realizar la solicitud");
+    const fetchOrderData = async () => {
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Error al realizar la solicitud");
+        }
+
+        const data = await response.json();
+        setOrderData(data);
+      } catch (error) {
+        console.error("Error:", error);
       }
-      return response.json();
-    })
-    .then((data) => setOrderData(data))
-    .catch((error) => console.error("Error:", error));
+    };
+
+    fetchOrderData();
   }, [url]);
 
   if (!orderData) {
@@ -43,9 +49,9 @@ function OrderDetail() {
         <p className="text-gray-600">Número de Orden: {orderData.orderId}</p>
         <p className="text-gray-600">Fecha: {new Date(orderData.order_date).toLocaleDateString()}</p>
 
-        <table className="w-full mt-4">
+        <table className="min-w-full mt-4 border-collapse border border-gray-300">
           <thead>
-            <tr>
+            <tr className="bg-gray-200">
               <th className="border px-4 py-2">Imagen</th>
               <th className="border px-4 py-2">Artículo #</th>
               <th className="border px-4 py-2">Descripción</th>
@@ -56,8 +62,8 @@ function OrderDetail() {
             </tr>
           </thead>
           <tbody>
-            {orderData.productsOrders.map((item) => (
-              <tr key={item.productOrderId}>
+            {orderData.productsOrders.map((item, index) => (
+              <tr key={item.productOrderId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                 <td className="border px-4 py-2">
                   <img
                     src={
@@ -66,7 +72,7 @@ function OrderDetail() {
                         : '/placeholder.jpg'
                     }
                     alt={item.productDTO.name}
-                    className="w-20 h-20 object-cover"
+                    className="w-20 h-20 object-cover rounded"
                   />
                 </td>
                 <td className="border px-4 py-2">{item.productDTO.productId}</td>

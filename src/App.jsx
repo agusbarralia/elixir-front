@@ -24,7 +24,6 @@ import ThankPage from './page/ThankPage';
 import UserPage from './page/UserPage';
 import AdminUserManagement from './page/AdminUserManagement';
 
-
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -43,143 +42,44 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen">
-        <ScrollToTop />
-        <div className={`flex-grow ${isAdminRoute ? 'flex' : 'flex-grow'}`}>
-          {isAdminRoute ? (
-            <div className="flex h-screen">
-              <Sidebar />
-              <div className="flex-grow">
-                <Routes>
-                  <Route
-                    path="/admin"
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminDashboard />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/products"
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminProduct />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/products/create"
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminProductForm />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/products/edit/:productId"
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminEditProduct />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/category"
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminCategories />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/users" 
-                    element={
-                      <ProtectedAdminRoute>
-                        <AdminUserManagement/>
-                      </ProtectedAdminRoute>
-                    } 
-                  />
-                  <Route
-                    path="/admin/orders"
-                    element={
-                      <ProtectedAdminRoute>
-                        <OrderHistory />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                  <Route
-                    path="/admin/orders/:id"
-                    element={
-                      <ProtectedAdminRoute>
-                        <OrderDetail />
-                      </ProtectedAdminRoute>
-                    }
-                  />
-                </Routes>
-              </div>
+        {isAdminRoute ? (
+          <div className="flex flex-grow">
+            <Sidebar />
+            <div className="flex-grow">
+              <Routes>
+                <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
+                <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProduct /></ProtectedAdminRoute>} />
+                <Route path="/admin/products/create" element={<ProtectedAdminRoute><AdminProductForm /></ProtectedAdminRoute>} />
+                <Route path="/admin/products/edit/:productId" element={<ProtectedAdminRoute><AdminEditProduct /></ProtectedAdminRoute>} />
+                <Route path="/admin/category" element={<ProtectedAdminRoute><AdminCategories /></ProtectedAdminRoute>} />
+                <Route path="/admin/users" element={<ProtectedAdminRoute><AdminUserManagement /></ProtectedAdminRoute>} />
+                <Route path="/admin/orders" element={<ProtectedAdminRoute><OrderHistory /></ProtectedAdminRoute>} />
+                <Route path="/admin/orders/:id" element={<ProtectedAdminRoute><OrderDetail /></ProtectedAdminRoute>} />
+              </Routes>
             </div>
-          ) : (
-            <>
-              <Navbar />
+          </div>
+        ) : (
+          <>
+            <Navbar />
+            <div className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/product/:productName" element={<ProductPage />} />
                 <Route path="/products/:category" element={<ProductsCategory />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route
-                  path="/cart" 
-                  element={
-                    <ProtectedRoute>
-                      <Cart />
-                    </ProtectedRoute>
-                  }
-                />
-                
-                <Route 
-                  path="/checkout" 
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route 
-                  path="/orders" 
-                  element={
-                    <ProtectedRoute>
-                      <OrderHistory />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route 
-                  path="/orders/:id" 
-                  element={
-                    <ProtectedRoute>
-                      <OrderDetail />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route 
-                  path="/thankspage" 
-                  element={
-                  <ProtectedRoute>
-                    <ThankPage />
-                  </ProtectedRoute>
-                  }
-                />
-                <Route 
-                  path="/userpage" 
-                  element={
-                  <ProtectedRoute>
-                    <UserPage />
-                  </ProtectedRoute>
-                  }
-                />
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/orders" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+                <Route path="/orders/:id" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+                <Route path="/thankspage" element={<ProtectedRoute><ThankPage /></ProtectedRoute>} />
+                <Route path="/userpage" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
               </Routes>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
         <Footer />
       </div>
     </>

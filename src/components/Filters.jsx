@@ -35,7 +35,7 @@ function Filters({ products, setFilteredProducts }) {
   const handleVarietyChange = (variety) => {
     let updatedSelectedVarieties = [...selectedVarieties];
     if (updatedSelectedVarieties.includes(variety)) {
-      updatedSelectedVarieties = updatedSelectedVarieties.filter(item => item !== variety);
+      updatedSelectedVarieties = updatedSelectedVarieties.filter(item => item !== variety); // Corrección aquí
     } else {
       updatedSelectedVarieties.push(variety);
     }
@@ -60,7 +60,7 @@ function Filters({ products, setFilteredProducts }) {
     if (varieties.length > 0) {
       filtered = filtered.filter(product => varieties.includes(product.varietyName));
     }
-    
+
     // Filtrar por precio teniendo en cuenta el descuento
     if (price > 0) {
       filtered = filtered.filter(product => {
@@ -74,26 +74,28 @@ function Filters({ products, setFilteredProducts }) {
   };
 
   return (
-    <div className="w-1/4 p-4 bg-white shadow-md rounded-lg">
-      <h3 className="text-xl font-bold mb-4">Filtros</h3>
+    <div className="w-1/4 p-6 bg-gray-100 shadow-lg rounded-lg">
+      <h3 className="text-2xl font-bold mb-4 text-center">Filtros</h3>
       
       {/* Filtros de Subcategoría */}
       <div className="mb-4">
         <h4 className="font-semibold mb-2">Subcategorías</h4>
         {subcategories.length > 0 ? (
           subcategories.map((subcategory) => (
-            <div key={subcategory}>
-              <label>
+            <div key={subcategory} className="flex items-center mb-1">
+              <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedSubcategories.includes(subcategory)}
                   onChange={() => handleSubcategoryChange(subcategory)}
-                /> {subcategory}
+                  className="mr-2"
+                />
+                {subcategory}
               </label>
             </div>
           ))
         ) : (
-          <p>No hay subcategorías disponibles.</p>
+          <p className="text-gray-500">No hay subcategorías disponibles.</p>
         )}
       </div>
 
@@ -102,28 +104,30 @@ function Filters({ products, setFilteredProducts }) {
         <h4 className="font-semibold mb-2">Variedades</h4>
         {varieties.length > 0 ? (
           varieties.map((variety) => (
-            <div key={variety}>
-              <label>
+            <div key={variety} className="flex items-center mb-1">
+              <label className="flex items-center cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedVarieties.includes(variety)}
                   onChange={() => handleVarietyChange(variety)}
-                /> {variety}
+                  className="mr-2"
+                />
+                {variety}
               </label>
             </div>
           ))
         ) : (
-          <p>No hay variedades disponibles.</p>
+          <p className="text-gray-500">No hay variedades disponibles.</p>
         )}
       </div>
 
       {/* Slider para filtrar por precio máximo */}
       <div className="mb-4">
-        <h4 className="font-semibold mb-2">Precio Máximo: ${priceRange}</h4>
+        <h4 className="font-semibold mb-2">Precio Máximo: <span className="font-bold">${priceRange}</span></h4>
         <input
           type="range"
           min="0"
-          max="50000" //Valor max del filtro.
+          max="50000" // Valor máximo del filtro.
           value={priceRange}
           onChange={handlePriceChange}
           className="w-full"

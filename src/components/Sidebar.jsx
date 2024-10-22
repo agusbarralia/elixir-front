@@ -5,9 +5,7 @@ function Sidebar() {
         <div className="p-6">
           <h1 className="text-2xl font-semibold mb-6">Panel de Administrador</h1>
           <ul>
-            <li className="mb-4">
-              <a href="/admin" className="hover:text-gray-300">Panel de Control</a>
-            </li>
+            
             <li className="mb-4">
               <a href="/admin/products" className="hover:text-gray-300">Productos</a>
             </li>
