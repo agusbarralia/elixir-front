@@ -172,7 +172,6 @@ function AdminEditProduct() {
         throw new Error("Error al actualizar imágenes");
       }
   
-      alert("Imágenes actualizadas con éxito.");
       navigate('/admin/products');
     } catch (error) {
       console.error("Error:", error);
@@ -230,13 +229,13 @@ function AdminEditProduct() {
 
         {/* Categoría */}
         <div className="mb-4">
-          <label className="block text-gray-700">Categoría:</label>
+          <label className="block text-gray-700">Bebida:</label>
           <select
             value={product.categoryId}
             onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
           >
-            <option value="">Seleccionar categoría</option>
+            <option value="">Seleccionar bebida</option>
             {categories.map((category) => (
               <option key={category.category_id} value={category.category_id}>
                 {category.name}
@@ -247,13 +246,13 @@ function AdminEditProduct() {
 
         {/* Subcategoría */}
         <div className="mb-4">
-          <label className="block text-gray-700">Subcategoría:</label>
+          <label className="block text-gray-700">Tipo de bebida:</label>
           <select
             value={product.subCategoryId}
             onChange={(e) => setProduct({ ...product, subCategoryId: e.target.value })}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
           >
-            <option value="">Seleccionar subcategoría</option>
+            <option value="">Seleccionar tipo de bebida</option>
             {subCategories.map((subCategory) => (
               <option key={subCategory.subCategory_id} value={subCategory.subCategory_id}>
                 {subCategory.name}
@@ -264,13 +263,13 @@ function AdminEditProduct() {
 
         {/* Variedad */}
         <div className="mb-4">
-          <label className="block text-gray-700">Variedad:</label>
+          <label className="block text-gray-700">Variedad de bebida:</label>
           <select
             value={product.varietyId}
             onChange={(e) => setProduct({ ...product, varietyId: e.target.value })}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
           >
-            <option value="">Seleccionar variedad</option>
+            <option value="">Seleccionar variedad de bebida</option>
             {varieties.map((variety) => (
               <option key={variety.variety_id} value={variety.variety_id}>
                 {variety.name}
