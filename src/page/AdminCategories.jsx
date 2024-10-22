@@ -60,7 +60,7 @@ function AdminCategories() {
 
   return (
     <div className="flex-1 bg-gray-100 p-6">
-      <h2 className="text-2xl mb-4">Gestión de Categorías, Subcategorías y Variedades</h2>
+      <h2 className="text-2xl mb-4">Gestión de Bebidas, Tipos y Variedades</h2>
 
       {/* Componente de Categoría */}
       <CategorySubcategoryVariety 

@@ -79,7 +79,7 @@ function Filters({ products, setFilteredProducts }) {
       
       {/* Filtros de Subcategoría */}
       <div className="mb-4">
-        <h4 className="font-semibold mb-2">Subcategorías</h4>
+        <h4 className="font-semibold mb-2">Tipos de Bebidas</h4>
         {subcategories.length > 0 ? (
           subcategories.map((subcategory) => (
             <div key={subcategory} className="flex items-center mb-1">
@@ -95,7 +95,7 @@ function Filters({ products, setFilteredProducts }) {
             </div>
           ))
         ) : (
-          <p className="text-gray-500">No hay subcategorías disponibles.</p>
+          <p className="text-gray-500">No hay Tipos de Bebidas disponibles.</p>
         )}
       </div>
 

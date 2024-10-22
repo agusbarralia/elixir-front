@@ -4,7 +4,7 @@ function CategoriesShelf() {
   return (
         <section className='m-20'>
           <h2 className="text-2xl font-bold text-center mb-10">
-            Explora por Categoría
+            Explora por Bebida
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative col-span-2 md:col-span-2 h-64">

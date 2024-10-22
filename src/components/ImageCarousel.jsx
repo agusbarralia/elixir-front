@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 
 const ImageCarousel = ({ images, imageType = 'image/png' }) => {
-  // Formatea las imágenes en base64 con el tipo adecuado o muestra el placeholder si no hay imágenes
+  // Formatea las imágenes en base64 con el tipo adecuado
   const formatImage = (image) => `data:${imageType};base64,${image}`;
   
   // Si no hay imágenes, usar el placeholder
   const defaultImage = '/placeholder.jpg';
   const imageList = images.length > 0 ? images : [defaultImage];
 
-  // Estado para la imagen actual, iniciando con la primera
   const [currentIndex, setCurrentIndex] = useState(0);
   const currentImage = images.length > 0 ? formatImage(imageList[currentIndex]) : defaultImage;
 
-  // Maneja el clic en las miniaturas
   const handleThumbnailClick = (index) => {
     setCurrentIndex(index);
   };
 
-  // Navegar a la imagen anterior
   const handlePreviousClick = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
