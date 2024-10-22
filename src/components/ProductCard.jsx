@@ -49,7 +49,7 @@ const ProductCard = ({ product }) => {
         <img
           src={imageUrl}
           alt={product.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-contain"
           onError={(e) => (e.target.src = "/placeholder.jpg")}
         />
         <div className="p-4 text-center">

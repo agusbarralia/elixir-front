@@ -50,7 +50,7 @@ const ImageCarousel = ({ images, imageType = 'image/png' }) => {
         <img
           src={currentImage}
           alt="Producto"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
 
         {/* Flecha derecha */}
@@ -72,7 +72,7 @@ const ImageCarousel = ({ images, imageType = 'image/png' }) => {
             key={index}
             src={images.length > 0 ? formatImage(image) : defaultImage}
             alt={`Thumbnail ${index + 1}`}
-            className={`w-28 h-28 object-cover cursor-pointer border-2 ${
+            className={`w-28 h-28 object-contain cursor-pointer border-2 ${
               currentIndex === index ? 'border-gray-300' : 'border-transparent'
             } hover:border-gray-300 transition duration-200`}
             onClick={() => handleThumbnailClick(index)}
