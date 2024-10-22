@@ -30,6 +30,7 @@ function Cart() {
         quantity: item.quantity,
         price: item.unit_price,
         subtotal: item.subtotal,
+        discountPrice: item.discount_price,
       }));
 
       setCartItems(formattedItems);
@@ -122,7 +123,7 @@ function Cart() {
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce((acc, item) => acc + item.discountPrice * item.quantity, 0);
   };
 
   const calculateTotalItems = () => {
@@ -147,41 +148,53 @@ function Cart() {
         <div className="flex flex-col md:flex-row md:justify-between">
           <div className="md:w-2/3 md:mr-4">
             <div className="grid grid-cols-1 gap-4 mb-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex items-center border p-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">Precio: ${item.price}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <button 
-                      onClick={() => handleDecrement(item.id, item.quantity)}
-                      className="p-1 bg-gray-200 rounded-full"
-                    >
-                      -
-                    </button>
-                    <p className="mx-4">{item.quantity}</p>
-                    <button 
-                      onClick={() => handleIncrement(item.id, item.quantity)}
-                      className="p-1 bg-gray-200 rounded-full"
-                    >
-                      +
-                    </button>
-                    <p className="font-semibold ml-4">${item.price * item.quantity}</p>
-                  </div>
-                  <button 
-                    onClick={() => removeProduct(item.id)} 
-                    className="ml-4 text-red-500 hover:text-red-700">
-                    Eliminar
-                  </button>
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex items-center border p-4">
+                <div className="flex-1">
+                  <h3 className="font-semibold">{item.name}</h3>
+                  <p className="text-gray-600">
+                    Precio:
+                    {item.discountPrice !== item.price ? (
+                      <span>
+                        <span className="ml-1 line-through">${item.price.toFixed(2)}</span>
+                        <span className="font-semibold text-red-500 ml-2">${item.discountPrice.toFixed(2)}</span>
+                      </span>
+                    ) : (
+                      <span className="ml-1 font-semibold">${item.price.toFixed(2)}</span>
+                    )}
+                  </p>
                 </div>
-              ))}
+                <div className="flex items-center">
+                  <button 
+                    onClick={() => handleDecrement(item.id, item.quantity)}
+                    className="p-1 bg-gray-200 rounded-full"
+                  >
+                    -
+                  </button>
+                  <p className="mx-4">{item.quantity}</p>
+                  <button 
+                    onClick={() => handleIncrement(item.id, item.quantity)}
+                    className="p-1 bg-gray-200 rounded-full"
+                  >
+                    +
+                  </button>
+                  <p className="font-semibold ml-4">
+                    ${((item.discountPrice > 0 ? item.discountPrice : item.price) * item.quantity).toFixed(2)}
+                  </p>
+                </div>
+                <button 
+                  onClick={() => removeProduct(item.id)} 
+                  className="ml-4 text-red-500 hover:text-red-700">
+                  Eliminar
+                </button>
+              </div>
+            ))}
             </div>
           </div>
 
           <div className="md:w-1/3 border p-4 h-44 flex flex-col justify-between">
             <p className="text-lg">Total de productos: {calculateTotalItems()}</p>
-            <p className="text-2xl mb-4">Subtotal: ${calculateSubtotal()}</p>
+            <p className="text-2xl mb-4">Subtotal: ${calculateSubtotal().toFixed(2)}</p>
             <button onClick={handleCheckoutClick} className="bg-blue-500 text-white py-2 px-4 rounded w-full">
               Proceder al Pago
             </button>

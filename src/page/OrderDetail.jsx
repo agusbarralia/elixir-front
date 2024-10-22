@@ -73,7 +73,11 @@ function OrderDetail() {
                 <td className="border px-4 py-2">{item.productDTO.name}</td>
                 <td className="border px-4 py-2">{item.quantity}</td>
                 <td className="border px-4 py-2">${item.unit_price.toFixed(2)}</td>
-                <td className="border px-4 py-2">${item.productDTO.discount.toFixed(2)}</td>
+                <td className="border px-4 py-2">
+                  {item.productDTO.discount > 0 
+                    ? (item.productDTO.discount.toFixed(2) * 100) + '%' 
+                    : '-'}
+                </td>
                 <td className="border px-4 py-2">${item.subtotal.toFixed(2)}</td>
               </tr>
             ))}

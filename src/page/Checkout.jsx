@@ -21,7 +21,7 @@ function Checkout() {
   });
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return cartItems.reduce((acc, item) => acc + item.discountPrice * item.quantity, 0).toFixed(2);
   };
 
   const handleExpiryDateChange = (e) => {
@@ -167,7 +167,7 @@ function Checkout() {
                 <span>
                   {item.title} x {item.quantity} - {item.name}
                 </span>
-                <span>${item.price * item.quantity}</span>
+                <span>${(item.discountPrice * item.quantity).toFixed(2)}</span>
               </div>
             ))}
             <div className="flex justify-between font-bold text-lg">
