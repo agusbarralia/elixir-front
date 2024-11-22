@@ -8,7 +8,7 @@ import {fetchProductsCategory } from '../redux/productSlice';
 function ProductsCategory() {
   const { category } = useParams();
   const dispatch = useDispatch()
-  const {items: products, loading, error} = useSelector((state) => state.products)
+  const {categoryItems: products, loading, error} = useSelector((state) => state.products)
   //const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);  // Nuevo estado para los productos filtrados
   

@@ -33,7 +33,6 @@ const Banner = () => {
           <div className="relative inline-block">
             {/* Imagen del logo */}
             <img src="/elixir_logo_eslogan.png" alt="Elixir Logo" className="w-128 animate-pulse" />
-            {/* Botón posicionado relativamente debajo del logo */}
             <button 
               onClick={handleScrollToContent} 
               className="absolute left-1/2 transform -translate-x-1/2 mt-4 px-6 py-3 bg-red-600 rounded hover:bg-red-700 transition duration-300 transform hover:scale-105"

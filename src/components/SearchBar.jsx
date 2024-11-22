@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchProducts } from '../redux/productSlice';
 
 function SearchBar() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // Hook para la navegación
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Cargar todos los productos al montar el componente
+  // Obtener productos desde el store
+  const products = useSelector((state) => state.products.items);
+  const loading = useSelector((state) => state.products.loading);
+  const error = useSelector((state) => state.products.error);
+
+  // Cargar productos al montar el componente si no están disponibles
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('http://localhost:8080/products');
-        const data = await response.json();
-        setProducts(data);
-        console.log("Productos recibidos:", data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+    if (!products.length) {
+      dispatch(fetchProducts());
+    }
+  }, [dispatch, products]);
 
   // Filtrar productos según el término de búsqueda
   useEffect(() => {
@@ -37,9 +33,9 @@ function SearchBar() {
     }
   }, [searchTerm, products]);
 
-  // Función para manejar la selección de un producto y limpiar el searchTerm
+  // Manejar la selección de un producto
   const handleProductClick = (product) => {
-    navigate(`/product/${product.name}`, { state: { product } });
+    navigate(`/product/${product.productId}`);
     setSearchTerm(''); // Limpiar el término de búsqueda
   };
 
@@ -52,29 +48,31 @@ function SearchBar() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      {filteredProducts.length > 0 && (
+      {/* Mostrar mensaje de carga o error */}
+      {loading && <p className="text-gray-600">Cargando productos...</p>}
+      {error && <p className="text-red-600">Error: {error}</p>}
+
+      {/* Mostrar productos filtrados */}
+      {filteredProducts.length > 0 && !loading && !error && (
         <div className="absolute left-0 right-0 bg-white shadow-lg z-10">
           {filteredProducts.map((product) => {
-            // Usa el mismo formato que en el componente ProductCard
-            const imageType = "image/png"; // Cambia este valor si el formato de la imagen es distinto
-            const image = product.imagesList[0]?.imageData || "/placeholder.jpg";
+            const imageType = 'image/png'; // Cambia este valor si el formato de la imagen es distinto
+            const image = product.imagesList[0]?.imageData || '/placeholder.jpg';
             const imageUrl = imageType ? `data:${imageType};base64,${image}` : image;
 
             // Calcular el precio con descuento
-            const discount = product.discount || 0; // Si no tiene descuento, se toma como 0.
+            const discount = product.discount || 0;
             const discountedPrice = discount > 0 ? (product.price * (1 - discount)).toFixed(2) : product.price;
 
             return (
               <div
                 key={product.productId}
                 className="flex items-center p-2 cursor-pointer hover:bg-gray-100"
-                onClick={() => handleProductClick(product)} // Llamar a la función handleProductClick
+                onClick={() => handleProductClick(product)}
               >
                 <img src={imageUrl} alt={product.name} className="w-10 h-10 mr-2" />
                 <div className="text-black">
                   <p className="font-bold">{product.name}</p>
-                  
-                  {/* Mostrar precios con y sin descuento */}
                   {discount > 0 ? (
                     <div className="flex items-center">
                       <p className="text-gray-600 line-through mr-2">${product.price.toFixed(2)}</p>
