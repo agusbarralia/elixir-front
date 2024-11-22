@@ -2,33 +2,29 @@ import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import Filters from '../components/Filters';
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../redux/productSlice';
 
 function ProductsCategory() {
   const { category } = useParams();
-  const [products, setProducts] = useState([]);
+  //const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);  // Nuevo estado para los productos filtrados
+  const dispatch = useDispatch()
+  const {items: products,loading,error} = useSelector((state) => state.products)
+  
 
-  const url = `http://localhost:8080/products/category?categoryName=${category}`;
-
-  useEffect(() => {
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Error al realizar la solicitud");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setProducts(data);
-        setFilteredProducts(data);  // Inicializar con todos los productos
-      })
-      .catch((error) => console.error("Error:", error));
-  }, [url]);
+  useEffect(()=>{
+    dispatch(fetchProducts(category))
+  },[dispatch,category])
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
 
+
+  if(loading) return <p>Cargando...</p>
+  if(error) return <p>Error al cargar los productos: {error}</p>
+  
   return (
     <div>
       <h2 className='text-4xl mb-6 text-center font-bold text-gray-800'>
