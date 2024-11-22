@@ -1,4 +1,4 @@
-//En los slides se administra el estado relacionado a una entidad especifica, en este caso productos
+//En los slices se administra el estado relacionado a una entidad especifica, en este caso productos
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
@@ -8,16 +8,27 @@ export const fetchProductsCategory = createAsyncThunk('products/fetchProductsCat
     return data 
 });
 
+export const fetchProductById = createAsyncThunk('product/fetchProductById', async (productId) => {
+    const { data } = await axios.get(`http://localhost:8080/products/id?id=${productId}`);
+    return data;
+});
+
 const productSlice = createSlice({
     name : 'products',
     initialState : {
         items: [],
+        selectedProduct: null, // Producto específico para la página de detalle
         loading : false,
         error: null
     },
-    reducers:{},
+    reducers:{
+        clearSelectedProduct: (state) => {
+            state.selectedProduct = null; // Limpia el producto seleccionado al salir de la página
+        },
+    },
     extraReducers: (builder) => {
         builder //3 casos del builder> pendiente - completado - rechazado.
+        //TODOS LOS PRODUCTOS DE UNA CATEGORIA
         .addCase(fetchProductsCategory.pending, (state) => {
             state.loading = true;
             state.error = null
@@ -30,7 +41,23 @@ const productSlice = createSlice({
             state.loading = false;
             state.error = action.error.message
         })
+        //PRODUCTOR POR ID
+        .addCase(fetchProductById.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+            state.selectedProduct = null
+        })
+        .addCase(fetchProductById.fulfilled, (state, action) => {
+            state.loading = false;
+            state.selectedProduct = action.payload;
+        })
+        .addCase(fetchProductById.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
+
     }
 })
 
+export const { clearSelectedProduct } = productSlice.actions;
 export default productSlice.reducer

@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden transform transition-transform duration-200 hover:scale-105 w-64 h-auto">
-      <div onClick={() => navigate(`/product/${product.name}`, { state: { product } })} className="cursor-pointer">
+      <div onClick={() => navigate(`/product/${product.productId}`)} className="cursor-pointer">
         <img
           src={imageUrl}
           alt={product.name}
