@@ -36,25 +36,9 @@ const ProductDetail = () => {
           <ImageCarousel />
         </div>
         <div className="flex flex-col justify-between p-4">
-          <ProductDescription 
-            title={product.name} 
-            brand={product.brand || "Marca desconocida"} 
-            description={product.productDescription || "Descripción no disponible."}
-          />
-          <ProductAddToCart 
-            price={product.price} 
-            productId={product.productId} 
-            productName={product.name} 
-            discount={product.discount} 
-            stock={product.stock} 
-          />
-          <ProductData 
-            category={product.categoryName || "Categoría desconocida"}
-            subCategory={product.subCategoryName || "Subcategoría no especificada"}
-            variety={product.varietyName || "Variedad no especificada"}
-            sort={product.sort || "Bodega no especificada"}
-            size={product.size || "Tamaño no especificado"}
-          />
+          <ProductDescription/>
+          <ProductAddToCart/>
+          <ProductData/>
         </div>
       </div>
     </div>

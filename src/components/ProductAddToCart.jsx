@@ -1,27 +1,21 @@
-/* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-function ProductAddToCart({ price, productId, productName, discount, stock }) {
+function ProductAddToCart() {
+  const product = useSelector((state) => state.products.selectedProduct); // Ajustar según la estructura
+  const { price, productId, name, discount, stock } = product || {};
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
 
-  // Convertir el descuento a porcentaje y calcular el precio con descuento si el descuento es mayor a 0.
-  const discountPercentage = discount * 100; // Convertir a porcentaje
-  const discountedPrice = discount > 0 ? (price * (1 - discount)).toFixed(2) : price; // Calcular precio con descuento
+  const discountPercentage = discount * 100;
+  const discountedPrice = discount > 0 ? (price * (1 - discount)).toFixed(2) : price;
 
-  // Función para actualizar la cantidad basada en un incremento o decremento.
-  const changeQuantity = (delta) => {
-    setQuantity((prevQuantity) => {
-      const newQuantity = prevQuantity + delta;
-      return newQuantity > 0 ? newQuantity : 1;
-    });
-  };
+  const changeQuantity = (delta) =>
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity + delta));
 
-  // Función para añadir el producto al carrito.
   const addToCart = async () => {
     const token = localStorage.getItem('token');
-    
     if (!token) {
       alert('Para agregar al carrito, primero se debe iniciar sesión.');
       navigate('/login');
@@ -33,12 +27,12 @@ function ProductAddToCart({ price, productId, productName, discount, stock }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Incluir el token de autenticación si es necesario.
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
-        alert(`${productName} agregado al carrito con éxito!`);
+        alert(`${name} agregado al carrito con éxito!`);
       } else {
         alert('No se pudo agregar el producto al carrito.');
       }
@@ -50,57 +44,29 @@ function ProductAddToCart({ price, productId, productName, discount, stock }) {
 
   return (
     <div className="mt-4">
-      {/* Sección de precios */}
       <div className="flex items-baseline mb-6">
-        {/* Mostrar el precio original tachado y el precio con descuento si corresponde */}
         {discount > 0 ? (
           <div>
-            {/* Precio original tachado */}
-            <p className="text-gray-500 line-through decoration-red-600 mr-2">
-              ${price.toFixed(2)}
-            </p>
-            {/* Precio con descuento y porcentaje */}
+            <p className="text-gray-500 line-through decoration-red-600 mr-2">${price?.toFixed(2)}</p>
             <p className="text-red-600 font-bold text-xl">
               ${discountedPrice} ({discountPercentage.toFixed(0)}% OFF)
             </p>
           </div>
         ) : (
-          // Mostrar solo el precio normal si no hay descuento
-          <p className="text-3xl">${price.toFixed(2)}</p>
+          <p className="text-3xl">${price?.toFixed(2)}</p>
         )}
       </div>
-
-      {/* Controles de cantidad */}
       <div className="flex items-center mb-4">
-        {/* Botón para disminuir cantidad */}
-        <button
-          onClick={() => changeQuantity(-1)}
-          className="border px-4 py-2 text-xl font-bold bg-gray-200 hover:bg-gray-300"
-        >
+        <button onClick={() => changeQuantity(-1)} className="border px-4 py-2 text-xl font-bold bg-gray-200 hover:bg-gray-300">
           -
         </button>
-
-        {/* Campo de entrada para mostrar la cantidad */}
-        <input
-          type="number"
-          min="1"
-          value={quantity}
-          readOnly // Deshabilitar la edición manual.
-          className="border p-2 w-16 text-center mx-2 bg-gray-100"
-        />
-
-        {/* Botón para aumentar cantidad */}
-        <button
-          onClick={() => changeQuantity(1)}
-          className="border px-4 py-2 text-xl font-bold bg-gray-200 hover:bg-gray-300"
-        >
+        <input type="number" min="1" value={quantity} readOnly className="border p-2 w-16 text-center mx-2 bg-gray-100" />
+        <button onClick={() => changeQuantity(1)} className="border px-4 py-2 text-xl font-bold bg-gray-200 hover:bg-gray-300">
           +
         </button>
       </div>
-
-      {/* Verificar stock y mostrar el botón o el mensaje correspondiente */}
       {stock > 0 ? (
-        <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}> 
+        <button className="w-80 px-4 py-3 bg-black text-white font-bold hover:bg-gray-800" onClick={addToCart}>
           Agregar al Carrito
         </button>
       ) : (
