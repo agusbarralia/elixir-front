@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchProducts } from '../redux/productSlice';
 
 const AdminProduct = () => {
-  const [products, setProducts] = useState([]);
+  //const [products, setProducts] = useState([]);
   const [productToDelete, setProductToDelete] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showDiscountDialog, setShowDiscountDialog] = useState(false);
@@ -11,28 +13,22 @@ const AdminProduct = () => {
   const role = localStorage.getItem('role');
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // Obtener productos desde el store
+  const { items: products, loading, error } = useSelector((state) => state.products);
+
+  // Cargar productos al montar el componente si no están disponibles
   useEffect(() => {
     if (role !== 'ADMIN') {
       navigate('/');
     }
-    fetchProducts();
-  }, [role, navigate]);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/products', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    if (!products.length) {
+      dispatch(fetchProducts());
     }
-  };
+  }, [dispatch, products,role, navigate]);
+
+
 
   const handleAddProduct = () => {
     navigate('/admin/products/create');
@@ -90,6 +86,10 @@ const AdminProduct = () => {
       console.error('Error applying discount:', error);
     }
   };
+
+
+  if (loading) return <p>Cargando producto...</p>;
+  if (error) return <p>Error al cargar el producto: {error}</p>;
 
   return (
     <div className="flex-1 bg-gray-100 p-6">

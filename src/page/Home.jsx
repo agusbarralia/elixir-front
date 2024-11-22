@@ -6,7 +6,6 @@ import { useState,useEffect } from "react";
 const Home = () => {
   return (
     <div>
-
       <Banner />
       <div id="content" className="p-4">
       <CategoriesShelf />
