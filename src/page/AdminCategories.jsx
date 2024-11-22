@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import CategorySubcategoryVariety from '../components/CategorySubcategoryVariety';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function AdminCategories() {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [varieties, setVarieties] = useState([]);
-  const token = localStorage.getItem('token');
+  const {role, token } = useSelector((state) => state.users);
 
   useEffect(() => {
     fetchCategories();

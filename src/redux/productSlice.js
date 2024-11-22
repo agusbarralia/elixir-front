@@ -5,8 +5,8 @@ import axios from "axios";
 
 export const fetchProductsCategory = createAsyncThunk('products/fetchProductsCategory', async (category) => { //Obtener todos los productos de una categoria
     const {data} = await axios(`http://localhost:8080/products/category?categoryName=${category}`) //obtenemos todos los productos, el await devuelve una promesa
-    return data 
-});
+    return data
+ });
 
 export const fetchProductById = createAsyncThunk('product/fetchProductById', async (productId) => { //Obtener un producto por Id
     const { data } = await axios.get(`http://localhost:8080/products/id?id=${productId}`);

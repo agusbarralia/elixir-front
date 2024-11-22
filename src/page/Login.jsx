@@ -1,43 +1,34 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Para redireccionar
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../redux/userSlice";
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate(); // Hook para redireccionar
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  
+  // Obtener el estado de autenticación desde Redux
+  const { loading, error, role, isAuthenticated } = useSelector((state) => state.users);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    try {
-      const response = await fetch('http://localhost:8080/api/v1/auth/authenticate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+    // Disparar la acción de inicio de sesión
+    dispatch(loginUser({ email, password }))
+      .unwrap() // Manejar la promesa directamente
+      .then(() => {
+        // Redirigir según el rol del usuario después de autenticarse
+        if (role === "ADMIN") {
+          navigate("/admin/products");
+        } else {
+          navigate("/");
+        }
+      })
+      .catch(() => {
+        // El error se manejará automáticamente en el slice
       });
-
-      if (!response.ok) {
-        throw new Error('Credenciales incorrectas');
-      }
-
-      const data = await response.json();
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('role', data.role); // Si quieres guardar el rol del usuario
-
-      // Redirigir al usuario dependiendo de su rol
-      if (data.role === 'ADMIN') {
-        navigate('/admin/products'); // Redirige al dashboard de admin
-      } else {
-        navigate('/'); // Redirige al homepage o alguna otra página
-      }
-
-    } catch (error) {
-      console.error("Error de inicio de sesión:", error);
-      setError('Error en el inicio de sesión. Verifica tus credenciales.');
-    }
   };
 
   return (
@@ -67,9 +58,13 @@ function Login() {
               required
             />
           </div>
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-            Iniciar Sesión
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            disabled={loading}
+          >
+            {loading ? "Cargando..." : "Iniciar Sesión"}
           </button>
         </form>
         <div className="text-center mt-4">

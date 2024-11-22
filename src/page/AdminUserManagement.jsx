@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { logoutUser } from '../redux/userSlice';
 
 const AdminUserManagement = () => {
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {token} = useSelector((state) => state.users)
 
     const fetchUsers = async () => {
         try {
             const response = await fetch('http://localhost:8080/users/admin/users', {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token}`,
                 },
             });
 
             if (response.status === 401) {
-                localStorage.removeItem('token');
+                dispatch(logoutUser()); // Disparar acción de cerrar sesión
                 navigate('/login');
                 return;
             }
@@ -37,7 +41,7 @@ const AdminUserManagement = () => {
             const response = await fetch('http://localhost:8080/users/admin/changeState', {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: UserFormData,
             });

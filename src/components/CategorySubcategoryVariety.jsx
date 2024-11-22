@@ -1,9 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 function CategorySubcategoryVariety({ title, fetchData, data, apiUrl }) {
   const [newItem, setNewItem] = useState('');
-  const token = localStorage.getItem('token');
+  const {token} = useSelector((state)=> state.users)
+
 
   const handleAddItem = async (e) => {
     e.preventDefault();

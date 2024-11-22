@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 function OrderDetail() {
   const { id } = useParams();
   const [orderData, setOrderData] = useState(null); // Cambiado a null para manejar mejor la carga inicial
   const url = `http://localhost:8080/orders/order/${id}`;
+  const {token} = useSelector((state)=> state.users)
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -12,7 +14,7 @@ function OrderDetail() {
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+            'Authorization': `Bearer ${token}`, 
           },
         });
 
@@ -28,7 +30,7 @@ function OrderDetail() {
     };
 
     fetchOrderData();
-  }, [url]);
+  }, [url,token]);
 
   if (!orderData) {
     return <div>Cargando...</div>; // Mostrar un mensaje de carga mientras se obtienen los datos

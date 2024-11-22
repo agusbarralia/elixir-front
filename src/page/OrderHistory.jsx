@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 function OrderHistory() {
@@ -6,7 +7,8 @@ function OrderHistory() {
 
   const url = 'http://localhost:8080/orders';
   const adminUrl = 'http://localhost:8080/orders/admin';
-  const role = localStorage.getItem('role');
+
+  const {role,token} = useSelector((state)=> state.users)
 
   // Determinamos si el usuario es admin y seleccionamos las URLs correctas
   const selectedUrl = role === 'ADMIN' ? adminUrl : url;
@@ -16,7 +18,7 @@ function OrderHistory() {
     fetch(selectedUrl, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+        Authorization: `Bearer ${token}`, 
       },
     })
       .then((response) => {
@@ -27,14 +29,14 @@ function OrderHistory() {
       })
       .then((data) => setOrders(data))
       .catch((error) => console.error('Error:', error));
-  }, [selectedUrl]);
+  }, [selectedUrl,token]);
 
   // Función para actualizar el estado de la orden
   const updateOrderState = (orderId) => {
     fetch(`http://localhost:8080/orders/order/${orderId}/state`, {
       method: 'PUT', // o PATCH
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       }
     })
       .then((response) => {

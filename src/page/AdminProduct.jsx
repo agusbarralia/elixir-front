@@ -9,13 +9,13 @@ const AdminProduct = () => {
   const [showDiscountDialog, setShowDiscountDialog] = useState(false);
   const [discountValue, setDiscountValue] = useState('');
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const role = localStorage.getItem('role');
-  const token = localStorage.getItem('token');
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   // Obtener productos desde el store
   const { items: products, loading, error } = useSelector((state) => state.products);
+  const { role,token } = useSelector((state) => state.users);
 
   // Cargar productos al montar el componente si no están disponibles
   useEffect(() => {
