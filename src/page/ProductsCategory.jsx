@@ -3,24 +3,22 @@ import ProductCard from '../components/ProductCard';
 import Filters from '../components/Filters';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../redux/productSlice';
+import {fetchProductsCategory } from '../redux/productSlice';
 
 function ProductsCategory() {
   const { category } = useParams();
+  const dispatch = useDispatch()
   //const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);  // Nuevo estado para los productos filtrados
-  const dispatch = useDispatch()
   const {items: products,loading,error} = useSelector((state) => state.products)
   
-
   useEffect(()=>{
-    dispatch(fetchProducts(category))
+    dispatch(fetchProductsCategory(category))
   },[dispatch,category])
 
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-
 
   if(loading) return <p>Cargando...</p>
   if(error) return <p>Error al cargar los productos: {error}</p>
