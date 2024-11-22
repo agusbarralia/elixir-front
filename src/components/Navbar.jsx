@@ -1,12 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import CartDropdown from './CartDropdown';
 import SearchBar from './SearchBar';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isCartHovered, setIsCartHovered] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
   const [timeoutId, setTimeoutId] = useState(null);
   const [cartTimeoutId, setCartTimeoutId] = useState(null);
   const [cartItems, setCartItems] = useState([]);
@@ -19,10 +16,6 @@ const Navbar = () => {
 
   const handleCategoryClick = (category) => {
     navigate(`/products/${category.toLowerCase()}`);
-  };
-
-  const handleCheckoutClick = () => {
-    navigate('/checkout');
   };
 
   const fetchCartItems = async () => {
@@ -83,35 +76,6 @@ const Navbar = () => {
     fetchCategories(); // Llamar al montar el componente
   }, []);
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-  const handleVariantClick = (categoryTitle, subcategoryTitle, variant) => {
-    navigate(`/products?category=${categoryTitle}&subcategory=${subcategoryTitle}&variant=${variant}`);
-  };
-
-  const handleMouseEnter = (index) => {
-    clearTimeout(timeoutId);
-    setActiveCategory(index);
-  };
-
-  const handleMouseLeave = () => {
-    const id = setTimeout(() => {
-      setActiveCategory(null);
-    }, 200);
-    setTimeoutId(id);
-  };
-
-  const handleCartMouseEnter = () => {
-    clearTimeout(cartTimeoutId);
-    setIsCartHovered(true);
-  };
-
-  const handleCartMouseLeave = () => {
-    const id = setTimeout(() => {
-      setIsCartHovered(false);
-    }, 200);
-    setCartTimeoutId(id);
-  };
 
   const role = localStorage.getItem('role');
 
@@ -147,31 +111,9 @@ const Navbar = () => {
           <div 
             key={index} 
             className="relative" 
-            onMouseEnter={() => handleMouseEnter(index)} 
-            onMouseLeave={handleMouseLeave}
           >
             <button onClick={() => handleCategoryClick(category.name)} className="hover:text-gray-400">{category.name}</button>
             
-            {/*activeCategory === index && (
-              <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white text-black rounded-lg shadow-lg p-4 z-10">
-                {category.subcategories.map((subcategory, subIndex) => (
-                  <div key={subIndex} className="mb-1">
-                    <h4 className="font-bold">{subcategory.title}</h4>
-                    <ul className="ml-4 list-disc">
-                      {subcategory.variants.map((variant, varIndex) => (
-                        <li 
-                          key={varIndex} 
-                          className="cursor-pointer hover:text-blue-600" 
-                          onClick={() => handleVariantClick(category.title, subcategory.title, variant)}
-                        >
-                          {variant}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            )*/}
           </div>
         ))}
       </div>
@@ -183,15 +125,9 @@ const Navbar = () => {
 
         {role !== 'ADMIN' ? (
           <div className='flex flex-row items-center space-x-2'>
-          <CartDropdown 
-            cartItems={cartItems}
-            handleCartClick={handleCartClick} 
-            handleCartMouseEnter={handleCartMouseEnter} 
-            handleCartMouseLeave={handleCartMouseLeave} 
-            isCartHovered={isCartHovered} 
-            subtotal={subtotal} 
-            handleCheckoutClick={handleCheckoutClick}
-          />
+          <button className="text-lg " onClick={handleCartClick}>
+          🛒
+          </button>
           {isLoggedIn ? (
           <button onClick={handleUserPageClick}>Mis Datos</button>
         ) : null}

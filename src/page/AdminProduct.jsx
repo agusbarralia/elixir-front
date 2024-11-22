@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { fetchProducts } from '../redux/productSlice';
 
 const AdminProduct = () => {
-  //const [products, setProducts] = useState([]);
   const [productToDelete, setProductToDelete] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showDiscountDialog, setShowDiscountDialog] = useState(false);
@@ -27,8 +26,6 @@ const AdminProduct = () => {
       dispatch(fetchProducts());
     }
   }, [dispatch, products,role, navigate]);
-
-
 
   const handleAddProduct = () => {
     navigate('/admin/products/create');
