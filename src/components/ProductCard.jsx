@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+  const { token} = useSelector((state) => state.users);
+
 
   const addToCart = async () => {
-    const token = localStorage.getItem('token');
 
     if (!token) {
       alert('Para agregar al carrito, primero se debe iniciar sesión.');
@@ -18,7 +20,7 @@ const ProductCard = ({ product }) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
       });
 

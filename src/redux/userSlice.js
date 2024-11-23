@@ -13,6 +13,17 @@ export const registerUser = createAsyncThunk("auth/registerUser", async (userDat
       return data; // La respuesta debe incluir {token, role }
   });
 
+export const fetchUser = createAsyncThunk("auth/fetchUser", async (token) => {
+    const { data } = await axios('http://localhost:8080/users/user', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return data; // La respuesta debe incluir {token, role }
+});
+
+
+
 
 const authSlice = createSlice({
   name: "users",
@@ -65,6 +76,20 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      // Buscar Usuario
+      .addCase(fetchUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       
   },
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const UserForm = ({ onClose, userData, onSave }) => {
+const UserForm = ({userData }) => {
   const [formData, setFormData] = useState({
     username: userData.username || "",
     name: userData.name || "",
@@ -75,8 +75,6 @@ const UserForm = ({ onClose, userData, onSave }) => {
     
         const data = await response.json();
         console.log('Usuario actualizado:', data);
-        onSave(data);
-        onClose();
       } catch (error) {
           console.error('Error al actualizar el usuario:', error);
       }
@@ -143,7 +141,6 @@ const UserForm = ({ onClose, userData, onSave }) => {
           </button>
           <button
             type="button"
-            onClick={onClose}
             className="px-4 py-2 bg-gray-300 text-black rounded-md shadow-sm"
           >
             Cerrar

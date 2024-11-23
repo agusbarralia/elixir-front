@@ -1,131 +1,54 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchCart, fetchAddToCart, updateQuantity, fetchRemove } from '../redux/cartSlice'; // Ajusta el path según tu estructura
 
 function Cart() {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const { token } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { token } = useSelector((state) => state.users);
+  const { items: cartItems, loading, error } = useSelector((state) => state.cart);
 
-  const fetchCartItems = async () => {
-    if (!token) {
-      setError('El usuario no está autenticado.');
-      setLoading(false);
-      return;
+  // Cargar el carrito cuando el componente se monta
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchCart(token));
     }
-
-    try {
-      const response = await fetch('http://localhost:8080/cart', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('No se pudo recuperar el carrito');
-      }
-
-      const data = await response.json();
-
-      const formattedItems = data.productsCart?.map((item) => ({
-        id: item.product_id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.unit_price,
-        subtotal: item.subtotal,
-        discountPrice: item.discount_price || 0,
-      })) || [];
-
-      setCartItems(formattedItems);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateQuantity = async (id, newQuantity) => {
-    try {
-      const formData = new FormData();
-      formData.append('productId', parseInt(id));
-      formData.append('quantity', parseInt(newQuantity));
-
-      const response = await fetch('http://localhost:8080/cart/update', {
-        method: 'PUT',
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        alert(errorData.message || 'Error al actualizar la cantidad');
-        setSuccessMessage(null);
-        return;
-      }
-
-      setCartItems(cartItems.map(item =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      ));
-      setSuccessMessage('Cantidad actualizada exitosamente');
-      setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (error) {
-      console.error('Error:', error);
-      setError(error.message);
-    }
-  };
+  }, [token, dispatch]);
 
   const handleIncrement = (id, currentQuantity) => {
-    updateQuantity(id, currentQuantity + 1);
+    const newQuantity = currentQuantity + 1;
+    if (token) {
+      dispatch(updateQuantity({id,newQuantity, token}));
+    }
   };
 
   const handleDecrement = (id, currentQuantity) => {
-    if (currentQuantity > 1) {
-      updateQuantity(id, currentQuantity - 1);
+
+    if (token && currentQuantity > 1) {
+      const newQuantity = currentQuantity - 1;
+      dispatch(updateQuantity({id, newQuantity, token })); // Lógica para decrementar
     }
-  };
-
-  const removeProduct = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:8080/cart/remove?productId=${id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('No se pudo eliminar el producto del carrito');
-      }
-
-      setCartItems(cartItems.filter(item => item.id !== id));
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
-
-  const handleCheckoutClick = () => {
-    navigate('/checkout', { state: { cartItems } });
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + (item.discountPrice || item.price) * item.quantity, 0);
+    return cartItems.reduce(
+      (acc, item) => acc + (item.discount_price || item.unit_price) * item.quantity,
+      0
+    );
   };
 
   const calculateTotalItems = () => {
     return cartItems.reduce((acc, item) => acc + item.quantity, 0);
   };
+
+  const handleCheckoutClick = () => {
+    navigate('/checkout', { state: { cartItems } });
+  };
+
+  const handleRemove = () => {
+    console.log("producto eliminado");
+  }
 
   if (loading) {
     return <p>Cargando carrito...</p>;
@@ -138,7 +61,6 @@ function Cart() {
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl mb-4">Tu Carrito</h2>
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
       {cartItems.length === 0 ? (
         <p>Tu carrito está vacío.</p>
       ) : (
@@ -146,28 +68,29 @@ function Cart() {
           <div className="md:w-2/3 md:mr-4">
             <div className="grid grid-cols-1 gap-4 mb-4">
               {cartItems.map((item) => (
-                <div key={item.id} className="flex items-center border p-4">
+                <div key={item.productscart_id} className="flex items-center border p-4">
                   <div className="flex-1">
                     <h3 className="font-semibold">{item.name}</h3>
                     <p className="text-gray-600">
                       Precio:
-                      {item.discountPrice !== item.price ? (
+                      {item.discount_price !== item.unit_price ? (
                         <span>
-                          <span className="ml-1 line-through">${item.price.toFixed(2)}</span>
-                          <span className="font-semibold text-red-500 ml-2">${item.discountPrice.toFixed(2)}</span>
+                          <span className="ml-1 line-through">${item.unit_price.toFixed(2)}</span>
+                          <span className="font-semibold text-red-500 ml-2">${item.discount_price.toFixed(2)}</span>
                         </span>
                       ) : (
-                        <span className="ml-1 font-semibold">${item.price.toFixed(2)}</span>
+                        <span className="ml-1 font-semibold">${item.unit_price.toFixed(2)}</span>
                       )}
                     </p>
                   </div>
                   <div className="flex items-center">
-                    <button onClick={() => handleDecrement(item.id, item.quantity)} className="p-1 bg-gray-200 rounded-full">-</button>
+                    <button onClick={() => handleDecrement(item.product_id, item.quantity)} className="p-1 bg-gray-200 rounded-full">-</button>
                     <p className="mx-4">{item.quantity}</p>
-                    <button onClick={() => handleIncrement(item.id, item.quantity)} className="p-1 bg-gray-200 rounded-full">+</button>
-                    <p className="font-semibold ml-4">${((item.discountPrice || item.price) * item.quantity).toFixed(2)}</p>
+                    <button onClick={() => handleIncrement(item.product_id, item.quantity)} className="p-1 bg-gray-200 rounded-full">+</button>
+                    <p className="font-semibold ml-4">${((item.discount_price || item.unit_price) * item.quantity).toFixed(2)}</p>
+                    <button onClick={() => handleRemove(item.product_id)} className="ml-4 text-red-500 hover:text-red-700">Eliminar</button>
+
                   </div>
-                  <button onClick={() => removeProduct(item.id)} className="ml-4 text-red-500 hover:text-red-700">Eliminar</button>
                 </div>
               ))}
             </div>

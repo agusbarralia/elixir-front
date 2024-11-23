@@ -37,7 +37,7 @@ const productSlice = createSlice({
         //TODOS LOS PRODUCTOS DE UNA CATEGORIA
         .addCase(fetchProductsCategory.pending, (state) => {
             state.loading = true;
-            state.error = null
+            state.error = null;
         })
         .addCase(fetchProductsCategory.fulfilled, (state, action) => {
             state.loading = false;

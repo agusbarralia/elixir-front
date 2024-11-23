@@ -1,52 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserForm from "../components/UserForm";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUser } from "../redux/userSlice";
 
 const UserPage = () => {
-  const [userData, setUserData] = useState({});
-  const [token, setToken] = useState(null);
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
-
-  const url = "http://localhost:8080/users/user";
+  const { token,user,loading, error} = useSelector((state) => state.users);
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
+    if (!token) {
       navigate("/login");
     }
-  }, []);
+  }, [token,navigate]);
 
-  const fetchUserData = () => {
-    if (token) {
-      fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Error al realizar la solicitud");
-          }
-          return response.json();
-        })
-        .then((data) => setUserData(data))
-        .catch((error) => console.error("Error:", error));
-    }
-  };
+  useEffect(()=>{
+    if(token){
+    dispatch(fetchUser(token))
+  }
+  }, [token, dispatch]);
 
-  useEffect(() => {
-    fetchUserData();
-  }, [token]);
 
   const handleButtonClick = () => setShowForm(true);
+
   const handleCloseForm = () => {
     setShowForm(false);
-    fetchUserData();
+    //fetchUserData(); //
   };
+
+  if (loading) return <p>Cargando producto...</p>;
+  
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  if (!user) { return <p>No se encontraron los datos del usuario.</p>}
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
@@ -54,19 +44,19 @@ const UserPage = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold text-gray-700">Nombre de Usuario:</p>
-          <p className="text-lg text-gray-900">{userData.username}</p>
+          <p className="text-lg text-gray-900">{user.username}</p>
         </div>
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold text-gray-700">Nombre:</p>
-          <p className="text-lg text-gray-900">{userData.name}</p>
+          <p className="text-lg text-gray-900">{user.name}</p>
         </div>
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold text-gray-700">Apellido:</p>
-          <p className="text-lg text-gray-900">{userData.last_name}</p>
+          <p className="text-lg text-gray-900">{user.last_name}</p>
         </div>
         <div className="flex items-center justify-between">
           <p className="text-lg font-semibold text-gray-700">Email:</p>
-          <p className="text-lg text-gray-900">{userData.email}</p>
+          <p className="text-lg text-gray-900">{user.email}</p>
         </div>
       </div>
       <div className="mt-6 text-right">
@@ -79,9 +69,7 @@ const UserPage = () => {
       </div>
       {showForm && (
         <UserForm
-          onClose={handleCloseForm} // Actualiza datos al cerrar el formulario
-          userData={userData}
-          onSave={handleCloseForm} // Trigger para obtener datos actualizados
+          userData={user}
         />
       )}
     </div>

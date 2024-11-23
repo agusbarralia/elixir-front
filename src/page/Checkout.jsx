@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function Checkout() {
   const location = useLocation();
   const cartItems = location.state?.cartItems || [];
   const navigate = useNavigate();
+  const { token } = useSelector((state) => state.users);
 
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
@@ -44,12 +46,11 @@ function Checkout() {
     e.preventDefault();
     console.log("Información de Envío:", shippingInfo);
     console.log("Información de Pago:", paymentInfo);
-    console.log(localStorage.getItem('token')); // Token desde localStorage
     
     fetch('http://localhost:8080/checkout/process', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`, // Token desde localStorage
+        'Authorization': `Bearer ${token}`, // Token desde localStorage
       },
     })
     .then(async (response) => {
