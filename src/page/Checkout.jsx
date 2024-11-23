@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { processCheckout } from '../redux/checkoutSlice';
 
 function Checkout() {
-  const location = useLocation();
-  const cartItems = location.state?.cartItems || [];
+  const dispatch = useDispatch();
+  const {items: cartItems, error, loading} = useSelector((state)=> state.cart);
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.users);
+  const {order,loading: loadingOrder,error: errorOrder} = useSelector((state)=> state.checkout)
 
   const [shippingInfo, setShippingInfo] = useState({
     fullName: '',
@@ -23,7 +25,7 @@ function Checkout() {
   });
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.discountPrice * item.quantity, 0).toFixed(2);
+    return cartItems.reduce((acc, item) => acc + item.discount_price * item.quantity, 0).toFixed(2);
   };
 
   const handleExpiryDateChange = (e) => {
@@ -46,23 +48,31 @@ function Checkout() {
     e.preventDefault();
     console.log("Información de Envío:", shippingInfo);
     console.log("Información de Pago:", paymentInfo);
-    
-    fetch('http://localhost:8080/checkout/process', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`, // Token desde localStorage
-      },
-    })
-    .then(async (response) => {
-      const data = await response.json(); // Mueve esto dentro del primer then
-      if (!response.ok) {
-        throw new Error('Error en la solicitud de checkout');
-      }
-      console.log('Respuesta del servidor:', data);
-      navigate('/thankspage');
-    })
+    dispatch(processCheckout(token));
 
   };
+
+  useEffect(() => {
+    if (order) {
+      navigate('/thankspage'); // Redirige a la página de agradecimiento
+    }
+  }, [order, navigate]); // Escucha los cambios en `order` y `navigate`
+
+  if (loading) {
+    return <p>Cargando pedido...</p>;
+  }
+
+  if (loadingOrder) {
+    return <p>Procesando orden...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
+  if (errorOrder) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -164,11 +174,11 @@ function Checkout() {
           <h3 className="text-2xl font-semibold mb-4">Resumen del Pedido</h3>
           <div className="border p-4 rounded-lg mb-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between mb-2">
+              <div key={item.productscart_id} className="flex justify-between mb-2">
                 <span>
                   {item.title} x {item.quantity} - {item.name}
                 </span>
-                <span>${(item.discountPrice * item.quantity).toFixed(2)}</span>
+                <span>${(item.discount_price * item.quantity).toFixed(2)}</span>
               </div>
             ))}
             <div className="flex justify-between font-bold text-lg">

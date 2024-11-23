@@ -58,7 +58,7 @@ function Cart() {
   };
 
   const handleCheckoutClick = () => {
-    navigate('/checkout', { state: { cartItems } });
+    navigate('/checkout');
   };
 
   const handleRemove = (productId) => {
