@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/userSlice"
+import { logoutUser } from "../redux/userSlice";
+import { fetchCategories } from "../redux/tagsSlice";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 
@@ -9,11 +10,9 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   // Obtener datos de autenticación desde Redux
-  const { isAuthenticated, role, token } = useSelector((state) => state.users);
+  const { isAuthenticated, role } = useSelector((state) => state.users);
+  const { categoriesItems: categories, loading } = useSelector((state) => state.tags);
 
   const handleCartClick = () => {
     navigate("/cart");
@@ -23,33 +22,9 @@ const Navbar = () => {
     navigate(`/products/${category.toLowerCase()}`);
   };
 
-  
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/categories", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("No se pudo recuperar las categorías");
-      }
-
-      const data = await response.json();
-      setCategories(data); // Asumimos que data es un array de categorías
-      setLoading(false); // Marcar como cargado
-    } catch (error) {
-      console.error(error);
-      setLoading(false); // Marcar como cargado incluso si hubo un error
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
-  }, [token]);
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(logoutUser()); // Disparar acción de cerrar sesión
@@ -65,8 +40,8 @@ const Navbar = () => {
   };
 
   const handleAdmin = () => {
-    navigate('/admin/products')
-  } 
+    navigate('/admin/products');
+  };
 
   // Condición para renderizar mientras se cargan las categorías
   if (loading) {
