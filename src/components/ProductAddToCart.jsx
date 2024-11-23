@@ -1,12 +1,15 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchAddToCart } from '../redux/cartSlice'; // Asegúrate de ajustar el path según tu estructura
 
 function ProductAddToCart() {
   const product = useSelector((state) => state.products.selectedProduct); // Ajustar según la estructura
   const { price, productId, name, discount, stock } = product || {};
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {token} = useSelector((state)=> state.users) 
 
   const discountPercentage = discount * 100;
   const discountedPrice = discount > 0 ? (price * (1 - discount)).toFixed(2) : price;
@@ -14,32 +17,23 @@ function ProductAddToCart() {
   const changeQuantity = (delta) =>
     setQuantity((prevQuantity) => Math.max(1, prevQuantity + delta));
 
-  const addToCart = async () => {
-    const token = localStorage.getItem('token');
+  const addToCart = () => {
     if (!token) {
       alert('Para agregar al carrito, primero se debe iniciar sesión.');
       navigate('/login');
       return;
     }
 
-    try {
-      const response = await fetch(`http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
+    // Usamos dispatch con fetchAddToCart
+    dispatch(fetchAddToCart({ productId, quantity, token }))
+      .unwrap()
+      .then(() => {
         alert(`${name} agregado al carrito con éxito!`);
-      } else {
-        alert('No se pudo agregar el producto al carrito.');
-      }
-    } catch (error) {
-      console.error('Error al agregar al carrito:', error);
-      alert('Hubo un problema al agregar el producto al carrito.');
-    }
+      })
+      .catch((error) => {
+        console.error('Error al agregar al carrito:', error);
+        alert('Hubo un problema al agregar el producto al carrito.');
+      });
   };
 
   return (

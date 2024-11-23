@@ -27,6 +27,8 @@ function Cart() {
 
       // Limpiar el temporizador si el componente se desmonta
       return () => clearTimeout(timer);
+    }else{
+      setShowPopup(false);
     }
   }, [error]);
 

@@ -11,10 +11,12 @@ export const fetchCart = createAsyncThunk('cart/fetchCart', async (token) => {
 });
 
 export const fetchAddToCart = createAsyncThunk(
-  'cart/fetchAddToCart',
-  async (productId, quantity, token) => {
-    const {data} = await axios.post(
-      `http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`,
+  'cart/fetchAddToCart', async ({productId, quantity, token}) => {
+    const formData = new FormData();
+    formData.append('productId', parseInt(productId));
+    formData.append('quantity', parseInt(quantity));
+
+    const {data} = await axios.post(`http://localhost:8080/cart/add`, formData,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -22,8 +24,7 @@ export const fetchAddToCart = createAsyncThunk(
       }
     );
     return data;
-  }
-);
+  });
 
 export const updateQuantity = createAsyncThunk('cart/updateQuantity', async ({id, newQuantity, token}) => {
         const formData = new FormData();
