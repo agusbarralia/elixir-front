@@ -26,41 +26,41 @@ export const fetchAddToCart = createAsyncThunk(
 );
 
 export const updateQuantity = createAsyncThunk('cart/updateQuantity', async ({id, newQuantity, token}) => {
-        console.log(newQuantity)
         const formData = new FormData();
         formData.append('productId', parseInt(id));
         formData.append('quantity', parseInt(newQuantity));
 
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
-        const { data } = await axios.put('http://localhost:8080/cart/update', formData, {
+        const response = await axios.put('http://localhost:8080/cart/update', formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
         }
     );
         // Devolver los datos necesarios para actualizar el estado
-        return data;
+        return response.data;
     }
 );
 
+export const fetchRemove = createAsyncThunk('cart/fetchRemove', async ({ productId, token }) => {
+    const formData = new FormData();
+    formData.append('productId', parseInt(productId));
 
+    const params = new URLSearchParams();
+    for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+    }
 
-export const fetchRemove = createAsyncThunk(
-        'cart/fetchRemove',
-        async ({productId, token}) => {
-        
-        const response = await axios(`http://localhost:8080/cart/remove?productId=${productId}`, {
+    const { data } = await axios.delete('http://localhost:8080/cart/remove', 
+        {
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
+            params: params, // Pasar los datos como parámetros de consulta
         }
     );
-        return response.data
-    }
-)
+    return data;
+});
+
 
 const cartSlice = createSlice({
     name : 'cart',
@@ -123,12 +123,12 @@ const cartSlice = createSlice({
         })
         .addCase(fetchRemove.fulfilled, (state, action) => {
             state.loading = false;
-            state.message = action.payload; // Mensaje del servidor. Opcional: Filtrar el producto eliminado de la lista local
-            state.items = state.items.filter(item => item.id !== action.meta.arg.productId);
+            const removedProductId = action.meta.arg.productId;
+            state.items = state.items.filter(item => item.product_id !== removedProductId);
         })
         .addCase(fetchRemove.rejected, (state, action) => {
             state.loading = false;
-            state.error = action.payload || "Error desconocido";
+            state.error = action.error.message;
         });
     }
 })

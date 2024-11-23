@@ -46,18 +46,15 @@ function Cart() {
     navigate('/checkout', { state: { cartItems } });
   };
 
-  const handleRemove = () => {
-    console.log("producto eliminado");
+  const handleRemove = (productId) => {
+    dispatch(fetchRemove({productId, token}));
   }
 
   if (loading) {
     return <p>Cargando carrito...</p>;
   }
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
+  //VER CUANDO SE SUPERA STOCK
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl mb-4">Tu Carrito</h2>
