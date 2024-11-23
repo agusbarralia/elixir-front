@@ -92,8 +92,13 @@ const cartSlice = createSlice({
             state.error = null;
         })
         .addCase(fetchAddToCart.fulfilled, (state,action) => {
+            const { product_id, quantity } = action.payload;
+            state.items = state.items.map((item) =>
+                item.product_id === product_id
+                    ? { ...item, quantity: quantity }
+                    : item
+            );
             state.loading = false;
-            state.items = [...state.items, action.payload]
         })
         .addCase(fetchAddToCart.rejected, (state,action) => {
             state.loading = false;

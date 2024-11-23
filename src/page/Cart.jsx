@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchCart, fetchAddToCart, updateQuantity, fetchRemove } from '../redux/cartSlice'; // Ajusta el path según tu estructura
+import { fetchCart, updateQuantity, fetchRemove } from '../redux/cartSlice'; // Ajusta el path según tu estructura
 
 function Cart() {
   const dispatch = useDispatch();

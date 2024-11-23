@@ -1,7 +1,6 @@
 import Banner from "../components/Banner";
 import CategoriesShelf from "../components/CategoriesShelf";
 import ProductList from "../components/ProductList";
-import { useState,useEffect } from "react";
 
 const Home = () => {
   return (

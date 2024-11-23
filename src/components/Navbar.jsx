@@ -9,7 +9,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [cartItems, setCartItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,35 +23,7 @@ const Navbar = () => {
     navigate(`/products/${category.toLowerCase()}`);
   };
 
-  const fetchCartItems = async () => {
-    if (!token) return; // Evita la solicitud si no hay token
-    try {
-      const response = await fetch("http://localhost:8080/cart", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("No se pudo recuperar el carrito");
-      }
-
-      const data = await response.json();
-      const formattedItems = data.productsCart.map((item) => ({
-        id: item.product_id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.unit_price,
-        subtotal: item.subtotal,
-      }));
-
-      setCartItems(formattedItems);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
 
   const fetchCategories = async () => {
     try {
@@ -77,7 +48,6 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    fetchCartItems();
     fetchCategories();
   }, [token]);
 
