@@ -1,44 +1,45 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { createCategory, createSubCategory, createVarieties, deleteCategory, deleteSubCategory, deleteVarieties } from '../redux/tagsSlice';
 
-function CategorySubcategoryVariety({ title, fetchData, data, apiUrl }) {
+function CategorySubcategoryVariety({ title, data}) {
   const [newItem, setNewItem] = useState('');
-  const {token} = useSelector((state)=> state.users)
-
+  const {token} = useSelector((state)=> state.users);
+  const {loading,error} = useSelector((state) => state.tags);
+  const dispatch = useDispatch();
 
   const handleAddItem = async (e) => {
     e.preventDefault();
-    try {
-      await fetch(`${apiUrl}/${newItem}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      setNewItem('');
-      fetchData(); // Recargar datos
-    } catch (error) {
-      console.error(`Error creating ${title.toLowerCase()}:`, error);
-    }
+    if(title == "Bebidas"){
+    dispatch(createCategory({newItem,token}));
+  } else if(title == "Tipos Bebidas"){
+    dispatch(createSubCategory({newItem,token}));
+  }else if(title == "Variedades Bebidas"){
+    dispatch(createVarieties({newItem,token}));
+  }
   };
 
   const handleDeleteItem = async (itemName) => {
     const confirmDelete = window.confirm(`¿Estás seguro de que deseas eliminar la ${title.toLowerCase()} "${itemName}"?`);
     if (!confirmDelete) return;
 
-    try {
-      await fetch(`${apiUrl}/${itemName}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      fetchData(); // Recargar datos después de eliminar
-    } catch (error) {
-      console.error(`Error deleting ${title.toLowerCase()}:`, error);
+    if(title == "Bebidas"){
+      dispatch(deleteCategory({itemName,token}))
+    } else if(title == "Tipos Bebidas"){
+      dispatch(deleteSubCategory({itemName,token}));
+    }else if(title == "Variedades Bebidas"){
+      dispatch(deleteVarieties({itemName,token}));
     }
+
   };
+
+  if(loading){
+    <p>Cargando...</p>
+  }
+  if(error){
+    <p>Error: {error}</p>
+  }
 
   return (
     <div className="mb-6 p-4 border border-gray-300 rounded-lg shadow-md bg-gray-50">

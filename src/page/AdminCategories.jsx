@@ -1,65 +1,28 @@
 import { useState, useEffect } from 'react';
 import CategorySubcategoryVariety from '../components/CategorySubcategoryVariety';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchAllTags } from '../redux/tagsSlice';
 
 function AdminCategories() {
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [varieties, setVarieties] = useState([]);
-  const {role, token } = useSelector((state) => state.users);
+  const {token } = useSelector((state) => state.users);
+  const {categoriesItems: categories,subcategoriesItems: subcategories,varietiesItems: varieties,loading,error} = useSelector((state) => state.tags);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchCategories();
-    fetchSubcategories();
-    fetchVarieties();
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/categories', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
+    if(token){
+      dispatch(fetchAllTags());
     }
-  };
+  }, [token,dispatch]);
 
-  const fetchSubcategories = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/subcategories', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setSubcategories(data);
-    } catch (error) {
-      console.error('Error fetching subcategories:', error);
-    }
-  };
+  if (loading) {
+    return <p>Cargando Datos...</p>;
+  }
 
-  const fetchVarieties = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/varieties', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setVarieties(data);
-    } catch (error) {
-      console.error('Error fetching varieties:', error);
-    }
-  };
-
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+  
   return (
     <div className="flex-1 bg-gray-100 p-6">
       <h2 className="text-2xl mb-4">Gestión de Bebidas, Tipos y Variedades</h2>
@@ -67,25 +30,19 @@ function AdminCategories() {
       {/* Componente de Categoría */}
       <CategorySubcategoryVariety 
         title="Bebidas"
-        fetchData={fetchCategories}
         data={categories}
-        apiUrl="http://localhost:8080/categories/admin"
       />
 
       {/* Componente de Subcategoría */}
       <CategorySubcategoryVariety 
         title="Tipos Bebidas"
-        fetchData={fetchSubcategories}
         data={subcategories}
-        apiUrl="http://localhost:8080/subcategories/admin"
       />
 
       {/* Componente de Variedad */}
       <CategorySubcategoryVariety 
         title="Variedades Bebidas"
-        fetchData={fetchVarieties}
         data={varieties}
-        apiUrl="http://localhost:8080/varieties/admin"
       />
     </div>
   );
