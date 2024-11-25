@@ -14,7 +14,6 @@ import OrderHistory from './page/OrderHistory';
 import OrderDetail from './page/OrderDetail';
 import AdminProduct from './page/AdminProduct';
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminDashboard from './page/AdminDashboard';
 import Sidebar from './components/Sidebar';
 import AdminProductForm from './page/AdminProductForm';
 import ProtectedAdminRoute from './components/ProtectedAdminRoute';
@@ -49,7 +48,6 @@ function App() {
             <Sidebar />
             <div className="flex-grow">
               <Routes>
-                <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
                 <Route path="/admin/products" element={<ProtectedAdminRoute><AdminProduct /></ProtectedAdminRoute>} />
                 <Route path="/admin/products/create" element={<ProtectedAdminRoute><AdminProductForm /></ProtectedAdminRoute>} />
                 <Route path="/admin/products/edit/:productId" element={<ProtectedAdminRoute><AdminEditProduct /></ProtectedAdminRoute>} />

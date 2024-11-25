@@ -18,6 +18,35 @@ export const fetchProducts = createAsyncThunk('product/fetchProducts', async () 
     return data;
 });
 
+export const fetchDeleteProduct = createAsyncThunk('product/fetchDeleteProduct', async ({token,productId})=>{
+    const formData = new FormData();
+    formData.append('product_id', parseInt(productId));
+
+    const {data} = await axios.put('http://localhost:8080/products/admin/changestate', formData, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    return data
+});
+
+export const updateDiscount = createAsyncThunk('product/updateDiscount', async ({token,product_id,discount})=>{
+    const formData = new FormData();
+    formData.append('product_id', parseInt(product_id));
+    formData.append('discount', discount);
+
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    const {data} = await axios.put('http://localhost:8080/products/admin/update/discount', formData, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    return data
+});
+
 const productSlice = createSlice({
     name : 'products',
     initialState : {
@@ -72,8 +101,34 @@ const productSlice = createSlice({
         .addCase(fetchProducts.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-        });
+        })
+        //Borrar un producto
+        .addCase(fetchDeleteProduct.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchDeleteProduct.fulfilled, (states, action) => {
+            states.loading = false;
+            const { productId } = action.payload;
+            states.items = states.items.filter(item => item.productId !== productId);
 
+        })
+        .addCase(fetchDeleteProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+        //Update Discount
+        .addCase(updateDiscount.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(updateDiscount.fulfilled, (state) => {
+            state.loading = false;
+        })
+        .addCase(updateDiscount.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        });
     }
 })
 

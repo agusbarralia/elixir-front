@@ -1,23 +1,29 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeStateUser, fetchUsersAdmin } from '../redux/userSlice';
 
 const AdminUserManagement = () => {
     //const [users, setUsers] = useState([]);
     const dispatch = useDispatch();
-    const {items : users, token} = useSelector((state) => state.users)
+    const {items : users, token,loading,error} = useSelector((state) => state.users)
 
     useEffect(() => {
         if(token)
             dispatch(fetchUsersAdmin(token))
     }, [dispatch,token]);
     
-    
     const toggleUserState = async (user) => {
        if(token){
         dispatch(changeStateUser({userId: user.id, token}))
     }
     };
+
+    if (loading) return <p>Cargando usuarios...</p>;
+
+    if (error) {
+      return <p>Error: {error}</p>;
+    }
+
 
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchProducts } from '../redux/productSlice';
+import { fetchDeleteProduct, fetchProducts, updateDiscount } from '../redux/productSlice';
 
 const AdminProduct = () => {
   const [productToDelete, setProductToDelete] = useState(null);
@@ -16,7 +16,7 @@ const AdminProduct = () => {
   // Obtener productos desde el store
   const { items: products, loading, error } = useSelector((state) => state.products);
   const { role,token } = useSelector((state) => state.users);
-
+  
   // Cargar productos al montar el componente si no están disponibles
   useEffect(() => {
     if (role !== 'ADMIN') {
@@ -41,47 +41,17 @@ const AdminProduct = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/products/admin/changestate?product_id=${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchProducts();
-        setShowConfirmDialog(false);
-      } else {
-        console.error('Error deleting product:', response.status);
-      }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
+    dispatch(fetchDeleteProduct({token,productId}))
+    setShowConfirmDialog(false);
   };
 
   const handleApplyDiscount = async (product_id) => {
-    const formData = new FormData();
-    formData.append('product_id', product_id);
-    formData.append('discount', parseFloat(discountValue / 100)); // Asegúrate de que sea un número
-
-    try {
-      const response = await fetch(`http://localhost:8080/products/admin/update/discount`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData, // Aquí pasas el formData
-      });
-
-      if (response.ok) {
-        fetchProducts();
-        setShowDiscountDialog(false);
-        setDiscountValue('');
-      }
-    } catch (error) {
-      console.error('Error applying discount:', error);
-    }
+    dispatch(updateDiscount({ token, product_id, discount: discountValue / 100 }))
+    .then(() => {
+        dispatch(fetchProducts());
+    });
+    setShowDiscountDialog(false);
+    setDiscountValue('');
   };
 
 
@@ -104,6 +74,7 @@ const AdminProduct = () => {
             <th className="py-3 px-4 text-left">Nombre</th>
             <th className="py-3 px-4 text-left">Precio</th>
             <th className="py-3 px-4 text-left">Stock</th>
+            <th className="py-3 px-4 text-left">Descuento</th>
             <th className="py-3 px-4 text-left">Acciones</th>
           </tr>
         </thead>
@@ -114,6 +85,7 @@ const AdminProduct = () => {
               <td className="py-2 px-4">{product.name}</td>
               <td className="py-2 px-4">$ {product.price.toFixed(2)}</td>
               <td className="py-2 px-4">{product.stock}</td>
+              <td className="py-2 px-4">{product.discount}</td>
               <td className="py-2 px-4 flex space-x-2">
                 <button 
                   onClick={() => handleEditProduct(product.productId)} 

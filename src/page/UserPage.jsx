@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserForm from "../components/UserForm";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,8 +26,6 @@ const UserPage = () => {
 
   const handleCloseForm = () => {
     setShowForm(false);
-    // Puedes llamar nuevamente a fetchUser si necesitas actualizar los datos después de cerrar el formulario.
-    // dispatch(fetchUser(token));
   };
 
   if (loading) return <p>Cargando perfil...</p>;
@@ -72,7 +70,7 @@ const UserPage = () => {
             </button>
           </div>
         </>
-      ) : ( // Mostrar formulario de edición si showForm es true
+      ) : ( 
         <UserForm 
           userData={user} 
           onClose={handleCloseForm} // Pasar la función para cerrar el formulario

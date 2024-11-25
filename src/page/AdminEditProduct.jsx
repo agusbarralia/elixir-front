@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 function AdminEditProduct() {
+  const {token} = useSelector((state) => state.users)
+
   const { productId } = useParams();
-  const token = localStorage.getItem("token");
+ // const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({

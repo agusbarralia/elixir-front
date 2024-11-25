@@ -1,44 +1,59 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { createCategory, createSubCategory, createVarieties, deleteCategory, deleteSubCategory, deleteVarieties } from '../redux/tagsSlice';
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createCategory,
+  createSubCategory,
+  createVarieties,
+  deleteCategory,
+  deleteSubCategory,
+  deleteVarieties,
+} from "../redux/tagsSlice";
+import { fetchProducts } from "../redux/productSlice";
 
-function CategorySubcategoryVariety({ title, data}) {
-  const [newItem, setNewItem] = useState('');
-  const {token} = useSelector((state)=> state.users);
-  const {loading,error} = useSelector((state) => state.tags);
+function CategorySubcategoryVariety({ title, data }) {
+  const [newItem, setNewItem] = useState("");
+  const { token } = useSelector((state) => state.users);
+  const { loading, error } = useSelector((state) => state.tags);
   const dispatch = useDispatch();
 
   const handleAddItem = async (e) => {
     e.preventDefault();
-    if(title == "Bebidas"){
-    dispatch(createCategory({newItem,token}));
-  } else if(title == "Tipos Bebidas"){
-    dispatch(createSubCategory({newItem,token}));
-  }else if(title == "Variedades Bebidas"){
-    dispatch(createVarieties({newItem,token}));
-  }
+    if (title == "Bebidas") {
+      dispatch(createCategory({ newItem, token }));
+    } else if (title == "Tipos Bebidas") {
+      dispatch(createSubCategory({ newItem, token }));
+    } else if (title == "Variedades Bebidas") {
+      dispatch(createVarieties({ newItem, token }));
+    }
   };
 
   const handleDeleteItem = async (itemName) => {
-    const confirmDelete = window.confirm(`¿Estás seguro de que deseas eliminar la ${title.toLowerCase()} "${itemName}"?`);
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que deseas eliminar la ${title.toLowerCase()} "${itemName}"?`
+    );
     if (!confirmDelete) return;
 
-    if(title == "Bebidas"){
-      dispatch(deleteCategory({itemName,token}))
-    } else if(title == "Tipos Bebidas"){
-      dispatch(deleteSubCategory({itemName,token}));
-    }else if(title == "Variedades Bebidas"){
-      dispatch(deleteVarieties({itemName,token}));
+    if (title === "Bebidas") {
+      dispatch(deleteCategory({ itemName, token })).then(() => {
+        dispatch(fetchProducts());
+      });
+    } else if (title === "Tipos Bebidas") {
+      dispatch(deleteSubCategory({ itemName, token })).then(() => {
+        dispatch(fetchProducts());
+      });
+    } else if (title === "Variedades Bebidas") {
+      dispatch(deleteVarieties({ itemName, token })).then(() => {
+        dispatch(fetchProducts());
+      });
     }
-
   };
 
-  if(loading){
-    <p>Cargando...</p>
+  if (loading) {
+    <p>Cargando...</p>;
   }
-  if(error){
-    <p>Error: {error}</p>
+  if (error) {
+    <p>Error: {error}</p>;
   }
 
   return (
@@ -55,7 +70,10 @@ function CategorySubcategoryVariety({ title, data}) {
           className="flex-grow px-4 py-2 border border-gray-400 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition-colors">
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition-colors"
+        >
           Agregar {title}
         </button>
       </form>
@@ -70,12 +88,15 @@ function CategorySubcategoryVariety({ title, data}) {
         </thead>
         <tbody>
           {data.length > 0 ? (
-            data.map(item => (
-              <tr key={item.name} className="hover:bg-gray-100 transition-colors">
+            data.map((item) => (
+              <tr
+                key={item.name}
+                className="hover:bg-gray-100 transition-colors"
+              >
                 <td className="py-2 border-b px-4">{item.name}</td>
                 <td className="py-2 border-b px-4">
-                  <button 
-                    onClick={() => handleDeleteItem(item.name)} 
+                  <button
+                    onClick={() => handleDeleteItem(item.name)}
                     className="text-red-500 hover:text-red-700 transition-colors"
                   >
                     Eliminar
@@ -85,7 +106,9 @@ function CategorySubcategoryVariety({ title, data}) {
             ))
           ) : (
             <tr>
-              <td colSpan="2" className="py-2 text-center">No hay elementos disponibles.</td>
+              <td colSpan="2" className="py-2 text-center">
+                No hay elementos disponibles.
+              </td>
             </tr>
           )}
         </tbody>

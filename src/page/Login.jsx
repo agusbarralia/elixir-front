@@ -11,7 +11,7 @@ function Login() {
   const navigate = useNavigate();
   
   // Obtener el estado de autenticación desde Redux
-  const { loading, error, role, isAuthenticated } = useSelector((state) => state.users);
+  const { loading, error, role } = useSelector((state) => state.users);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
