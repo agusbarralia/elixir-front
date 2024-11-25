@@ -4,13 +4,13 @@ import axios from "axios";
 // Iniciar sesión
 export const loginUser = createAsyncThunk("auth/loginUser", async ({ email, password }) => {
   const { data } = await axios.post("http://localhost:8080/api/v1/auth/authenticate", { email, password });
-  return data; // La respuesta debe incluir {token, role}
+  return data; 
 });
 
 // Registrar usuario
 export const registerUser = createAsyncThunk("auth/registerUser", async (userData) => {
   const { data } = await axios.post("http://localhost:8080/api/v1/auth/register", userData);
-  return data; // La respuesta debe incluir {token, role}
+  return data; 
 });
 
 // Obtener usuario actual
@@ -20,7 +20,17 @@ export const fetchUser = createAsyncThunk("auth/fetchUser", async (token) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return data; // La respuesta debe incluir {token, role}
+  return data; 
+});
+
+// Obtener todos los usuarios (ADMIN)
+export const fetchUsersAdmin = createAsyncThunk("auth/fetchUsersAdmin", async (token) => {
+  const { data } = await axios.get("http://localhost:8080/users/admin/users", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return data; 
 });
 
 // Actualizar usuario
@@ -39,9 +49,26 @@ export const updateUser = createAsyncThunk("auth/updateUser", async ({ token, fo
   return data; // Devuelve la respuesta del servidor
 });
 
+export const changeStateUser = createAsyncThunk('auth/changeStateUser', async ({userId, token}) => {
+  const formData = new FormData();
+  formData.append('userId', parseInt(userId));
+
+  const response = await axios.put('http://localhost:8080/users/admin/changeState', formData, {
+      headers: {
+          'Authorization': `Bearer ${token}`,
+      },
+  }
+);
+  // Devolver los datos necesarios para actualizar el estado
+  return response.data;
+}
+);
+
+
 const authSlice = createSlice({
   name: "users",
   initialState: {
+    items : [],
     user: null,
     token: null,
     role: null,
@@ -104,6 +131,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Actualizar usuario
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
@@ -116,6 +144,38 @@ const authSlice = createSlice({
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      // Obtener todos los usuarios (ADMIN)
+      .addCase(fetchUsersAdmin.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsersAdmin.fulfilled, (state, action) => {
+        state.items = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchUsersAdmin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      //ChangeStateUser
+      .addCase(changeStateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(changeStateUser.fulfilled, (states, action) => {
+        states.loading = false;
+        const { id,state } = action.payload;
+        states.items = states.items.map((item) =>
+            item.id === id
+                ? { ...item, state: state }
+                : item
+        );
+      })
+      .addCase(changeStateUser.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.error.message;
       });
   },
 });
