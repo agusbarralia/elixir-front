@@ -30,6 +30,36 @@ export const fetchDeleteProduct = createAsyncThunk('product/fetchDeleteProduct',
     return data
 });
 
+export const createProduct = createAsyncThunk('product/CreateProduct', async ({token, newProduct}) => { //Obtener todos los productos disponibles
+    console.log(token)
+    console.log("prodcuto")
+    console.log(newProduct)
+
+    const formData = new FormData();
+        formData.append('name', newProduct.name);
+        formData.append('product_description', newProduct.product_description);
+        formData.append('price', newProduct.price);
+        formData.append('stock', newProduct.stock);
+        formData.append('varietyId', newProduct.varietyId);
+        formData.append('subCategoryId', newProduct.subCategoryId);
+        formData.append('categoryId', newProduct.categoryId);
+        newProduct.images.forEach((image) => {
+            formData.append(`images`, image);
+        });
+
+    for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+    const { data } = await axios.post('http://localhost:8080/products/admin/create', formData, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
+    return data;
+});
+
+
 export const updateDiscount = createAsyncThunk('product/updateDiscount', async ({token,product_id,discount})=>{
     const formData = new FormData();
     formData.append('product_id', parseInt(product_id));
@@ -128,7 +158,21 @@ const productSlice = createSlice({
         .addCase(updateDiscount.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
-        });
+        })
+
+        //create product
+        .addCase(createProduct.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(createProduct.fulfilled, (state,action) => {
+            state.loading = false;
+            state.items = [...state.items, action.payload]
+        })
+        .addCase(createProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
     }
 })
 
