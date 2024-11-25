@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllTags } from "../redux/tagsSlice";
 import { createProduct } from "../redux/productSlice";
 
 function ProductForm({ token }) {
-  const baseUrl1 = "http://localhost:8080/products/admin/create";
   const {
     categoriesItems: categories,
     subcategoriesItems: subCategories,

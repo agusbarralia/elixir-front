@@ -1,80 +1,78 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import { fetchAllTags } from "../redux/tagsSlice";
+import { fetchProductById } from "../redux/productSlice";
 
 function AdminEditProduct() {
   const {token} = useSelector((state) => state.users)
-
   const { productId } = useParams();
- // const token = localStorage.getItem("token");
   const navigate = useNavigate();
+  const {
+    categoriesItems: categories,
+    subcategoriesItems: subCategories,
+    varietiesItems: varieties,
+    loading,
+    error,
+  } = useSelector((state) => state.tags);
+  const {selectedProduct: productData} = useSelector((state)=> state.products)
+  const dispatch = useDispatch();
 
-  const [product, setProduct] = useState({
-    productId: "",
-    name: "",
-    productDescription: "",
-    price: "",
-    stock: "",
-    varietyName: "",
-    varietyId: "",
-    subCategoryName: "",
-    subCategoryId: "",
-    categoryName: "",
-    categoryId: "",
-    imagesList: [], // Para imágenes existentes
-  });
-
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
-  const [varieties, setVarieties] = useState([]);
+  const [product, setProduct] = useState(productData);
   const [newImages, setNewImages] = useState([]); // Para imágenes nuevas
   const [removedImages, setRemovedImages] = useState([]); // Para imágenes que se eliminan
 
-  const url = `http://localhost:8080/products/id?id=${productId}`;
-  const categoriesUrl = `http://localhost:8080/categories`;
-  const subCategoriesUrl = `http://localhost:8080/subcategories`;
-  const varietiesUrl = `http://localhost:8080/varieties`;
   const urlEdit = `http://localhost:8080/products/admin/update/values`;
   const urlUpdateImages = `http://localhost:8080/products/admin/update/images`;
 
-  // Cargar categorías, subcategorías y variedades
-  useEffect(() => {
-    fetch(categoriesUrl)
-      .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.error("Error al obtener categorías:", error));
+  // Función para asignar IDs basados en nombres
+  const assignIdsBasedOnNames = () => {
+    if (!productData) return;
 
-    fetch(subCategoriesUrl)
-      .then((response) => response.json())
-      .then((data) => setSubCategories(data))
-      .catch((error) => console.error("Error al obtener subcategorías:", error));
+    const updatedProduct = { ...productData };
 
-    fetch(varietiesUrl)
-      .then((response) => response.json())
-      .then((data) => setVarieties(data))
-      .catch((error) => console.error("Error al obtener variedades:", error));
-  }, [categoriesUrl, subCategoriesUrl, varietiesUrl]);
-
-  // Cargar datos del producto seleccionado
-  useEffect(() => {
-    if (categories.length > 0 && subCategories.length > 0 && varieties.length > 0) {
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          setProduct(data);
-
-          const foundCategory = categories.find((cat) => cat.name === data.categoryName);
-          if (foundCategory) setProduct((prev) => ({ ...prev, categoryId: foundCategory.category_id }));
-
-          const foundSubCategory = subCategories.find((sub) => sub.name === data.subCategoryName);
-          if (foundSubCategory) setProduct((prev) => ({ ...prev, subCategoryId: foundSubCategory.subCategory_id }));
-
-          const foundVariety = varieties.find((variety) => variety.name === data.varietyName);
-          if (foundVariety) setProduct((prev) => ({ ...prev, varietyId: foundVariety.variety_id }));
-        })
-        .catch((error) => console.error("Error al obtener producto:", error));
+    // Buscar categoría
+    const category = categories.find((cat) => cat.name === productData.categoryName);
+    if (category) {
+      updatedProduct.categoryId = category.category_id;
     }
-  }, [categories, subCategories, varieties, url]);
+
+    // Buscar subcategoría
+    const subCategory = subCategories.find(
+      (subCat) => subCat.name === productData.subCategoryName
+    );
+    if (subCategory) {
+      updatedProduct.subCategoryId = subCategory.subCategory_id;
+    }
+
+    // Buscar variedad
+    const variety = varieties.find((variety) => variety.name === productData.varietyName);
+    if (variety) {
+      updatedProduct.varietyId = variety.variety_id;
+    }
+
+    setProduct(updatedProduct);
+  };
+
+
+  useEffect(() => {
+    setProduct(productData);
+  }, [productData]);
+  
+  useEffect(() => {
+    dispatch(fetchAllTags()).then(() => {
+      dispatch(fetchProductById(productId));
+    });;
+  }, [dispatch,productId]);
+
+  
+  useEffect(() => {
+    // Llamar a assignIdsBasedOnNames cuando los datos del producto y los tags estén listos
+    if (productData && categories.length && subCategories.length && varieties.length) {
+      assignIdsBasedOnNames();
+    }
+  }, [productData, categories, subCategories, varieties]);
+
 
   // Manejar la eliminación de una imagen existente
   const handleStoredImageRemove = (imageId) => {
@@ -181,8 +179,15 @@ function AdminEditProduct() {
       alert("Error al actualizar imágenes");
     }
   };
-  
 
+  if (loading) return <p>Cargando producto...</p>;
+  if (error) return <p>Error al cargar el producto: {error}</p>;
+
+  if (!product) {
+    return <p>No se pudo cargar el producto.</p>; // Evita errores si no hay datos
+  }  
+  
+  
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Editar Producto</h2>
