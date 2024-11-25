@@ -1,60 +1,30 @@
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import {useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { changeOrderState, fetchOrders, fetchOrdersAdmin } from '../redux/orderSlice';
 
 function OrderHistory() {
-  const [orders, setOrders] = useState([]);
-
-  const url = 'http://localhost:8080/orders';
-  const adminUrl = 'http://localhost:8080/orders/admin';
+  const dispatch = useDispatch()
 
   const {role,token} = useSelector((state)=> state.users)
-
+  const {items: orders, loading, error} = useSelector((state)=> state.orders)
   // Determinamos si el usuario es admin y seleccionamos las URLs correctas
-  const selectedUrl = role === 'ADMIN' ? adminUrl : url;
   const selectedEnd = role === 'ADMIN' ? '/admin/orders/' : '/orders/';
 
-  useEffect(() => {
-    fetch(selectedUrl, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`, 
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error al realizar la solicitud');
-        }
-        return response.json();
-      })
-      .then((data) => setOrders(data))
-      .catch((error) => console.error('Error:', error));
-  }, [selectedUrl,token]);
+  useEffect(()=>{
+    if(token){
+      if(role === 'ADMIN') dispatch(fetchOrdersAdmin(token))
+      else if(role != 'ADMIN') dispatch(fetchOrders(token))
+    }
+    },[dispatch,role,token])
 
   // Función para actualizar el estado de la orden
   const updateOrderState = (orderId) => {
-    fetch(`http://localhost:8080/orders/order/${orderId}/state`, {
-      method: 'PUT', // o PATCH
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Error al actualizar el estado de la orden');
-        }
-        return response.json();
-      })
-      .then(() => {
-        // Actualizamos el estado local para reflejar el cambio
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            order.orderId === orderId ? { ...order, state: 'Finalizada' } : order
-          )
-        );
-      })
-      .catch((error) => console.error('Error:', error));
+    dispatch(changeOrderState({token,orderId}))
   };
+
+  if (loading) return <p>Cargando ordenes...</p>;
+  if (error) return <p>Error al cargar la orden: {error}</p>;
 
   return (
     <div className="container mx-auto p-6">

@@ -1,36 +1,20 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { fetchOrderDetail } from "../redux/orderSlice";
 
 function OrderDetail() {
   const { id } = useParams();
-  const [orderData, setOrderData] = useState(null); // Cambiado a null para manejar mejor la carga inicial
-  const url = `http://localhost:8080/orders/order/${id}`;
   const {token} = useSelector((state)=> state.users)
+  const {selectOrder : orderData, loading, error} = useSelector((state) => state.orders)
+  const dispatch = useDispatch()
 
-  useEffect(() => {
-    const fetchOrderData = async () => {
-      try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`, 
-          },
-        });
+  useEffect(()=>{
+    dispatch(fetchOrderDetail({token,id}))    
+  },[token,id,dispatch])
 
-        if (!response.ok) {
-          throw new Error("Error al realizar la solicitud");
-        }
-
-        const data = await response.json();
-        setOrderData(data);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchOrderData();
-  }, [url,token]);
+  if (loading) return <p>Cargando orden...</p>;
+  if (error) return <p>Error al cargar la orden: {error}</p>;
 
   if (!orderData) {
     return <div>Cargando...</div>; // Mostrar un mensaje de carga mientras se obtienen los datos
