@@ -1,9 +1,10 @@
+import { useSelector } from 'react-redux';
 import { Navigate } from 'react-router-dom';
 
 const ProtectedAdminRoute = ({ children }) => {
   // Obtener el token de autenticación y el rol del local storage
-  const token = localStorage.getItem('token');
-  const role = localStorage.getItem('role');
+
+  const { token, role } = useSelector((state) => state.users);
 
   // Verificar si el usuario está autenticado y tiene el rol de admin
   if (!token || role !== 'ADMIN') {

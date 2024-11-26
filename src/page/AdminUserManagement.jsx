@@ -1,57 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeStateUser, fetchUsersAdmin } from '../redux/userSlice';
 
 const AdminUserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const navigate = useNavigate();
-
-    const fetchUsers = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/users/admin/users', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-
-            if (response.status === 401) {
-                localStorage.removeItem('token');
-                navigate('/login');
-                return;
-            }
-
-            if (!response.ok) throw new Error('Error fetching users');
-
-            const data = await response.json();
-            setUsers(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const toggleUserState = async (user) => {
-        try {
-            const UserFormData = new FormData();
-            UserFormData.append('userId', user.id);
-
-            const response = await fetch('http://localhost:8080/users/admin/changeState', {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: UserFormData,
-            });
-
-            if (!response.ok) throw new Error('Error updating user state');
-            fetchUsers();
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    //const [users, setUsers] = useState([]);
+    const dispatch = useDispatch();
+    const {items : users, token,loading,error} = useSelector((state) => state.users)
 
     useEffect(() => {
-        fetchUsers();
-    }, []);
+        if(token)
+            dispatch(fetchUsersAdmin(token))
+    }, [dispatch,token]);
+    
+    const toggleUserState = async (user) => {
+       if(token){
+        dispatch(changeStateUser({userId: user.id, token}))
+    }
+    };
+
+    if (loading) return <p>Cargando usuarios...</p>;
+
+    if (error) {
+      return <p>Error: {error}</p>;
+    }
+
 
     return (
         <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md mt-10">

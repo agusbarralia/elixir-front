@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../redux/userSlice";
 
-const UserForm = ({ onClose, userData, onSave }) => {
+const UserForm = ({ userData, onClose }) => {
   const [formData, setFormData] = useState({
     username: userData.username || "",
     name: userData.name || "",
     email: userData.email || "",
-    last_name: userData.last_name || ""
+    last_name: userData.last_name || "",
   });
 
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
-  const token = localStorage.getItem('token');
+
+  const dispatch = useDispatch();
+  const { token, loading } = useSelector((state) => state.users);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -34,52 +38,28 @@ const UserForm = ({ onClose, userData, onSave }) => {
 
     setErrors(newErrors);
 
-    // El formulario es válido si no hay errores
     setIsFormValid(Object.keys(newErrors).length === 0);
   };
 
   useEffect(() => {
-    // Validar el formulario al montar el componente
-    validateForm();
+    validateForm(); // Validar al montar
   }, []);
 
   useEffect(() => {
-    // Validar el formulario cada vez que cambie el estado de los campos
-    validateForm();
+    validateForm(); // Validar al cambiar datos
   }, [formData]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isFormValid) {
-      try {
-        const formDataToSend = new FormData();
-        formDataToSend.append('username', formData.username);
-        formDataToSend.append('email', formData.email);
-        formDataToSend.append('name', formData.name);
-        formDataToSend.append('last_name', formData.last_name);
-
-        console.log('Token:', token);
-
-        // Llamada a la API (ajusta la URL a tu backend)
-        const response = await fetch(`http://localhost:8080/users/user`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formDataToSend,
+      dispatch(updateUser({ token, formData }))
+        .unwrap()
+        .then(() => {
+          if (onClose) onClose();
+        })
+        .catch((error) => {
+          console.error("Error al actualizar el usuario:", error);
         });
-      
-        if (!response.ok) {
-          throw new Error("Error en la respuesta del servidor");
-        }
-    
-        const data = await response.json();
-        console.log('Usuario actualizado:', data);
-        onSave(data);
-        onClose();
-      } catch (error) {
-          console.error('Error al actualizar el usuario:', error);
-      }
     }
   };
 
@@ -109,17 +89,7 @@ const UserForm = ({ onClose, userData, onSave }) => {
           />
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-        </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Apellido:</label>
           <input
@@ -134,19 +104,19 @@ const UserForm = ({ onClose, userData, onSave }) => {
         <div className="flex justify-end space-x-4">
           <button
             type="submit"
-            disabled={!isFormValid}
+            disabled={!isFormValid || loading}
             className={`px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm ${
-              !isFormValid ? "opacity-50 cursor-not-allowed" : ""
+              !isFormValid || loading ? "opacity-50 cursor-not-allowed" : "hover:bg-indigo-700"
             }`}
           >
-            Guardar
+            {loading ? "Guardando..." : "Guardar"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-black rounded-md shadow-sm"
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md shadow-sm hover:bg-gray-300"
           >
-            Cerrar
+            Cancelar
           </button>
         </div>
       </form>

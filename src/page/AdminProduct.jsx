@@ -1,38 +1,31 @@
 import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { fetchDeleteProduct, fetchProducts, updateDiscount } from '../redux/productSlice';
 
 const AdminProduct = () => {
-  const [products, setProducts] = useState([]);
   const [productToDelete, setProductToDelete] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showDiscountDialog, setShowDiscountDialog] = useState(false);
   const [discountValue, setDiscountValue] = useState('');
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const role = localStorage.getItem('role');
-  const token = localStorage.getItem('token');
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // Obtener productos desde el store
+  const { items: products, loading, error } = useSelector((state) => state.products);
+  const { role,token } = useSelector((state) => state.users);
+  
+  // Cargar productos al montar el componente si no están disponibles
   useEffect(() => {
     if (role !== 'ADMIN') {
       navigate('/');
     }
-    fetchProducts();
-  }, [role, navigate]);
-
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/products', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    if (!products.length) {
+      dispatch(fetchProducts());
     }
-  };
+  }, [dispatch, products,role, navigate]);
 
   const handleAddProduct = () => {
     navigate('/admin/products/create');
@@ -48,48 +41,22 @@ const AdminProduct = () => {
   };
 
   const handleDeleteProduct = async (productId) => {
-    try {
-      const response = await fetch(`http://localhost:8080/products/admin/changestate?product_id=${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        fetchProducts();
-        setShowConfirmDialog(false);
-      } else {
-        console.error('Error deleting product:', response.status);
-      }
-    } catch (error) {
-      console.error('Error deleting product:', error);
-    }
+    dispatch(fetchDeleteProduct({token,productId}))
+    setShowConfirmDialog(false);
   };
 
   const handleApplyDiscount = async (product_id) => {
-    const formData = new FormData();
-    formData.append('product_id', product_id);
-    formData.append('discount', parseFloat(discountValue / 100)); // Asegúrate de que sea un número
-
-    try {
-      const response = await fetch(`http://localhost:8080/products/admin/update/discount`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData, // Aquí pasas el formData
-      });
-
-      if (response.ok) {
-        fetchProducts();
-        setShowDiscountDialog(false);
-        setDiscountValue('');
-      }
-    } catch (error) {
-      console.error('Error applying discount:', error);
-    }
+    dispatch(updateDiscount({ token, product_id, discount: discountValue / 100 }))
+    .then(() => {
+        dispatch(fetchProducts());
+    });
+    setShowDiscountDialog(false);
+    setDiscountValue('');
   };
+
+
+  if (loading) return <p>Cargando producto...</p>;
+  if (error) return <p>Error al cargar el producto: {error}</p>;
 
   return (
     <div className="flex-1 bg-gray-100 p-6">
@@ -107,6 +74,7 @@ const AdminProduct = () => {
             <th className="py-3 px-4 text-left">Nombre</th>
             <th className="py-3 px-4 text-left">Precio</th>
             <th className="py-3 px-4 text-left">Stock</th>
+            <th className="py-3 px-4 text-left">Descuento</th>
             <th className="py-3 px-4 text-left">Acciones</th>
           </tr>
         </thead>
@@ -117,6 +85,7 @@ const AdminProduct = () => {
               <td className="py-2 px-4">{product.name}</td>
               <td className="py-2 px-4">$ {product.price.toFixed(2)}</td>
               <td className="py-2 px-4">{product.stock}</td>
+              <td className="py-2 px-4">{product.discount}</td>
               <td className="py-2 px-4 flex space-x-2">
                 <button 
                   onClick={() => handleEditProduct(product.productId)} 

@@ -1,8 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../redux/userSlice'; // Asegúrate de que esta importación es correcta
 
 function Register() {
+  const dispatch = useDispatch(); // Hook para despachar acciones
   const navigate = useNavigate(); // Hook para redireccionar
+
+  const { loading, error, token, role } = useSelector((state) => state.users); // Obtenemos el estado del store
 
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
@@ -12,6 +17,7 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     // Verificar si las contraseñas coinciden
     if (password !== confirmPassword) {
       alert('Las contraseñas no coinciden');
@@ -26,43 +32,24 @@ function Register() {
       password,
     };
 
-    // Realizar la solicitud al backend
-    fetch('http://localhost:8080/api/v1/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Error al registrarse');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      // Manejar la respuesta del backend
-      console.log('Registro exitoso:', data);
-      // Si es necesario, puedes almacenar el JWT en localStorage
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('role', data.role);      
-
-      if (data.role === 'ADMIN') {
-        navigate('/admin'); // Redirige al dashboard de admin
-      } else {
-        navigate('/'); // Redirige al homepage o alguna otra página
-      }
-
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
+    // Despachar la acción de registro
+    dispatch(registerUser(user));
   };
+
+  // Usamos useEffect para redirigir después de que el estado cambie
+  useEffect(() => {
+    if (role === 'ADMIN') {
+      navigate('/admin');
+    } else if (role === 'USER' && token) {
+      navigate('/');
+    }
+  }, [role, token, navigate]); // Solo se ejecuta cuando 'role' o 'token' cambian
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Registrarse</h2>
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
@@ -120,7 +107,7 @@ function Register() {
             />
           </div>
           <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">
-            Registrarse
+            {loading ? 'Cargando...' : 'Registrarse'}
           </button>
         </form>
         <div className="text-center mt-4">
