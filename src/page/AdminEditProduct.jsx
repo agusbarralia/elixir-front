@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchAllTags } from "../redux/tagsSlice";
-import { fetchProductById } from "../redux/productSlice";
+import { fetchProductById, fetchProducts, updateProduct } from "../redux/productSlice";
 
 function AdminEditProduct() {
   const {token} = useSelector((state) => state.users)
@@ -22,8 +22,6 @@ function AdminEditProduct() {
   const [newImages, setNewImages] = useState([]); // Para imágenes nuevas
   const [removedImages, setRemovedImages] = useState([]); // Para imágenes que se eliminan
 
-  const urlEdit = `http://localhost:8080/products/admin/update/values`;
-  const urlUpdateImages = `http://localhost:8080/products/admin/update/images`;
 
   // Función para asignar IDs basados en nombres
   const assignIdsBasedOnNames = () => {
@@ -81,7 +79,6 @@ function AdminEditProduct() {
       ...prev,
       imagesList: prev.imagesList.filter((img) => img.imageId !== imageId),
     }));
-    console.log(removedImages);
 
   };
 
@@ -100,78 +97,13 @@ function AdminEditProduct() {
   // Manejar el envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("id", product.productId);
-    formData.append("name", product.name);
-    formData.append("product_description", product.productDescription);
-    formData.append("price", product.price);
-    formData.append("stock", product.stock);
-    formData.append("varietyId", product.varietyId);
-    formData.append("subCategoryId", product.subCategoryId);
-    formData.append("categoryId", product.categoryId);
-
-
-    try {
-      const response = await fetch(`${urlEdit}`, {
-        method: "PUT",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al actualizar el producto");
-      }
-
-      const data = await response.json();
-      alert("Producto actualizado con éxito.");
-      // Ahora actualizar las imágenes
-      await updateImages();
-
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Hubo un error al actualizar el producto.");
-    }
-  };
-
-  // Función para actualizar las imágenes
-  const updateImages = async () => {
-    const formData = new FormData();
-  
-    // Agrega el ID del producto como texto
-    formData.append("productId", product.productId);
-  
-    // Agrega las nuevas imágenes (archivos) al FormData
-    newImages.forEach((image) => {
-      formData.append("imagesAdd", image); // Asegúrate que "image" sea un archivo válido
-    });
-  
-    // Agrega las imágenes a remover como texto (URLs o identificadores)
-    removedImages.forEach((imageId) => {
-      formData.append("imagesRemove", imageId); // Enviamos cada ID como un valor independiente
-    });
-
-    try {
-      console.log(removedImages);
-      const response = await fetch("http://localhost:8080/products/admin/update/images", {
-        method: "PUT",
-        body: formData, // Enviar como form-data
-        headers: {
-          Authorization: `Bearer ${token}`, // Mantener el header de autorización si es necesario
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error("Error al actualizar imágenes");
-      }
-  
-      navigate('/admin/products');
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error al actualizar imágenes");
-    }
-  };
+    
+    dispatch(updateProduct({token,product,newImages,removedImages}))
+    .then(() => {
+    dispatch(fetchProducts());})
+    .then(()=> {
+      navigate('/admin/products');});
+  }
 
   if (loading) return <p>Cargando producto...</p>;
   if (error) return <p>Error al cargar el producto: {error}</p>;

@@ -31,10 +31,6 @@ export const fetchDeleteProduct = createAsyncThunk('product/fetchDeleteProduct',
 });
 
 export const createProduct = createAsyncThunk('product/CreateProduct', async ({token, newProduct}) => { //Obtener todos los productos disponibles
-    console.log(token)
-    console.log("prodcuto")
-    console.log(newProduct)
-
     const formData = new FormData();
         formData.append('name', newProduct.name);
         formData.append('product_description', newProduct.product_description);
@@ -76,6 +72,54 @@ export const updateDiscount = createAsyncThunk('product/updateDiscount', async (
     });
     return data
 });
+
+
+export const updateProduct = createAsyncThunk(
+  'product/updateProduct',
+  async ({ token, product, newImages, removedImages }) => {
+
+      const valuesFormData = new FormData();
+      valuesFormData.append("id", product.productId);
+      valuesFormData.append("name", product.name);
+      valuesFormData.append("product_description", product.productDescription);
+      valuesFormData.append("price", product.price);
+      valuesFormData.append("stock", product.stock);
+      valuesFormData.append("varietyId", product.varietyId);
+      valuesFormData.append("subCategoryId", product.subCategoryId);
+      valuesFormData.append("categoryId", product.categoryId);
+
+      // Crear el FormData para la actualización de imágenes
+      const imagesFormData = new FormData();
+      imagesFormData.append("productId", product.productId);
+
+      newImages.forEach((image) => {
+        imagesFormData.append("imagesAdd", image);
+      });
+
+      removedImages.forEach((imageId) => {
+        imagesFormData.append("imagesRemove", imageId);
+      });
+
+      // Realizar ambas peticiones simultáneamente
+      const [valuesResponse, imagesResponse] = await Promise.all([
+        axios.put(`http://localhost:8080/products/admin/update/values`, valuesFormData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.put(`http://localhost:8080/products/admin/update/images`, imagesFormData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+      ]);
+
+      // Devolver las respuestas si todo fue exitoso
+      return { valuesResponse: valuesResponse.data, imagesResponse: imagesResponse.data };
+    
+  }
+);
+
 
 const productSlice = createSlice({
     name : 'products',
@@ -170,6 +214,18 @@ const productSlice = createSlice({
             state.items = [...state.items, action.payload]
         })
         .addCase(createProduct.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.error.message;
+        })
+        
+        .addCase(updateProduct.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(updateProduct.fulfilled, (state) => {
+            state.loading = false;
+        })
+        .addCase(updateProduct.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
         })
