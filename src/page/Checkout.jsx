@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { processCheckout } from '../redux/checkoutSlice';
+import { fetchProducts } from '../redux/productSlice';
 
 function Checkout() {
   const dispatch = useDispatch();
@@ -48,8 +49,9 @@ function Checkout() {
     e.preventDefault();
     console.log("Información de Envío:", shippingInfo);
     console.log("Información de Pago:", paymentInfo);
-    dispatch(processCheckout(token));
-
+    dispatch(processCheckout(token)).then(() => {
+      dispatch(fetchProducts())
+    });
   };
 
   useEffect(() => {

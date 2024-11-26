@@ -65,6 +65,8 @@ function Cart() {
     dispatch(fetchRemove({ productId, token }));
   };
 
+  if(loading){<p>Cargando Carrito...</p>}
+  
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-3xl mb-4">Tu Carrito</h2>
