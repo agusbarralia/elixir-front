@@ -41,7 +41,7 @@ function Login() {
             <input
               type="email"
               id="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-950"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -52,7 +52,7 @@ function Login() {
             <input
               type="password"
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-rose-950"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -61,14 +61,14 @@ function Login() {
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+            className="w-full bg-rose-950 text-white py-2 px-4 rounded-lg hover:bg-rose-700"
             disabled={loading}
           >
             {loading ? "Cargando..." : "Iniciar Sesión"}
           </button>
         </form>
         <div className="text-center mt-4">
-          <p className="text-sm">¿No tienes cuenta? <a href="/register" className="text-blue-500">Regístrate</a></p>
+          <p className="text-sm">¿No tienes cuenta? <a href="/register" className="text-rose-950">Regístrate</a></p>
         </div>
       </div>
     </div>

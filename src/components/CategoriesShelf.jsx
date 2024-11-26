@@ -36,7 +36,7 @@ function CategoriesShelf() {
             <div className="relative col-span-1 md:col-span-1 row-span-2 h-full">
               <Link to="/products/cervezas">
                 <img
-                  src="/beer2.jpg"
+                  src="/glassBeer.png"
                   alt="cervezas"
                   className="w-full h-full object-cover rounded-md"
                 />
@@ -62,7 +62,7 @@ function CategoriesShelf() {
             <div className="relative col-span-2 md:col-span-2 h-64">
               <Link to="/products/vodkas">
                 <img
-                  src="/categoriaVodka.jpg"
+                  src="/vodkaBanner.png"
                   alt="Vodka"
                   className="w-full h-full object-cover rounded-md"
                 />

@@ -5,9 +5,9 @@ function Filters({ products, setFilteredProducts }) {
   const [varieties, setVarieties] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [selectedVarieties, setSelectedVarieties] = useState([]);
-  const [priceRange, setPriceRange] = useState(50000); // Estado para reflejar el valor del slider
+  const [priceRange, setPriceRange] = useState(50000);
+  const [sortOrder, setSortOrder] = useState('asc');
 
-  // Extraer subcategorías y variedades únicas al recibir los productos
   useEffect(() => {
     const uniqueSubcategories = [...new Set(products.map(product => product.subCategoryName))];
     const uniqueVarieties = [...new Set(products.map(product => product.varietyName))];
@@ -15,11 +15,13 @@ function Filters({ products, setFilteredProducts }) {
     setSubcategories(uniqueSubcategories);
     setVarieties(uniqueVarieties);
 
-    // Aplicar filtros al cargar productos por primera vez
-    applyFilters(selectedSubcategories, selectedVarieties, priceRange);
+    applyFilters(selectedSubcategories, selectedVarieties, priceRange, sortOrder);
   }, [products]);
 
-  // Manejar el cambio de selección en subcategorías
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+
   const handleSubcategoryChange = (subcategory) => {
     let updatedSelectedSubcategories = [...selectedSubcategories];
     if (updatedSelectedSubcategories.includes(subcategory)) {
@@ -28,30 +30,33 @@ function Filters({ products, setFilteredProducts }) {
       updatedSelectedSubcategories.push(subcategory);
     }
     setSelectedSubcategories(updatedSelectedSubcategories);
-    applyFilters(updatedSelectedSubcategories, selectedVarieties, priceRange);
+    applyFilters(updatedSelectedSubcategories, selectedVarieties, priceRange, sortOrder);
   };
 
-  // Manejar el cambio de selección en variedades
   const handleVarietyChange = (variety) => {
     let updatedSelectedVarieties = [...selectedVarieties];
     if (updatedSelectedVarieties.includes(variety)) {
-      updatedSelectedVarieties = updatedSelectedVarieties.filter(item => item !== variety); // Corrección aquí
+      updatedSelectedVarieties = updatedSelectedVarieties.filter(item => item !== variety);
     } else {
       updatedSelectedVarieties.push(variety);
     }
     setSelectedVarieties(updatedSelectedVarieties);
-    applyFilters(selectedSubcategories, updatedSelectedVarieties, priceRange);
+    applyFilters(selectedSubcategories, updatedSelectedVarieties, priceRange, sortOrder);
   };
 
-  // Manejar el cambio de selección en el rango de precios
   const handlePriceChange = (event) => {
     const newPrice = parseInt(event.target.value, 10);
     setPriceRange(newPrice);
-    applyFilters(selectedSubcategories, selectedVarieties, newPrice);
+    applyFilters(selectedSubcategories, selectedVarieties, newPrice, sortOrder);
   };
 
-  // Aplicar los filtros en base a las subcategorías, variedades y el precio máximo seleccionado
-  const applyFilters = (subcategories, varieties, price) => {
+  const handleSortChange = (event) => {
+    const newSortOrder = event.target.value;
+    setSortOrder(newSortOrder);
+    applyFilters(selectedSubcategories, selectedVarieties, priceRange, newSortOrder);
+  };
+
+  const applyFilters = (subcategories, varieties, price, sortOrder) => {
     let filtered = products;
 
     if (subcategories.length > 0) {
@@ -61,12 +66,25 @@ function Filters({ products, setFilteredProducts }) {
       filtered = filtered.filter(product => varieties.includes(product.varietyName));
     }
 
-    // Filtrar por precio teniendo en cuenta el descuento
     if (price > 0) {
       filtered = filtered.filter(product => {
-        const discount = product.discount || 0; // Si no tiene descuento, se toma como 0.
+        const discount = product.discount || 0;
         const discountedPrice = discount > 0 ? (product.price * (1 - discount)).toFixed(2) : product.price;
-        return discountedPrice <= price; // Comparar con el precio después de aplicar el descuento
+        return discountedPrice <= price;
+      });
+    }
+
+    if (sortOrder === 'asc') {
+      filtered = filtered.sort((a, b) => {
+        const priceA = a.price - (a.discount ? a.price * a.discount : 0);
+        const priceB = b.price - (b.discount ? b.price * b.discount : 0);
+        return priceA - priceB;
+      });
+    } else {
+      filtered = filtered.sort((a, b) => {
+        const priceA = a.price - (a.discount ? a.price * a.discount : 0);
+        const priceB = b.price - (b.discount ? b.price * b.discount : 0);
+        return priceB - priceA;
       });
     }
 
@@ -74,23 +92,26 @@ function Filters({ products, setFilteredProducts }) {
   };
 
   return (
-    <div className="w-1/4 p-6 bg-gray-100 shadow-lg rounded-lg">
-      <h3 className="text-2xl font-bold mb-4 text-center">Filtros</h3>
-      
-      {/* Filtros de Subcategoría */}
-      <div className="mb-4">
-        <h4 className="font-semibold mb-2">Tipos de Bebidas</h4>
+    <div className="w-full md:w-1/4 p-6 bg-white border border-gray-200">
+      <h3 className="text-2xl font-bold mb-6 text-gray-800 uppercase tracking-wide text-left">
+        Filtros
+      </h3>
+
+      <div className="mb-6">
+        <h4 className="font-semibold mb-3 text-lg text-gray-700 border-b-2 border-rose-950 pb-1 uppercase tracking-wide">
+          Tipos de Bebidas
+        </h4>
         {subcategories.length > 0 ? (
-          subcategories.map((subcategory) => (
-            <div key={subcategory} className="flex items-center mb-1">
-              <label className="flex items-center cursor-pointer">
+          subcategories.map(subcategory => (
+            <div key={subcategory} className="flex items-center mb-3">
+              <label className="flex items-center cursor-pointer text-gray-600 hover:text-gray-800">
                 <input
                   type="checkbox"
                   checked={selectedSubcategories.includes(subcategory)}
                   onChange={() => handleSubcategoryChange(subcategory)}
-                  className="mr-2"
+                  className="form-checkbox h-4 w-4 text-rose-950 mr-2"
                 />
-                {subcategory}
+                {capitalizeFirstLetter(subcategory)}
               </label>
             </div>
           ))
@@ -99,20 +120,21 @@ function Filters({ products, setFilteredProducts }) {
         )}
       </div>
 
-      {/* Filtros de Variedad */}
-      <div className="mb-4">
-        <h4 className="font-semibold mb-2">Variedades</h4>
+      <div className="mb-6">
+        <h4 className="font-semibold mb-3 text-lg text-gray-700 border-b-2 border-rose-950 pb-1 uppercase tracking-wide">
+          Variedades
+        </h4>
         {varieties.length > 0 ? (
-          varieties.map((variety) => (
-            <div key={variety} className="flex items-center mb-1">
-              <label className="flex items-center cursor-pointer">
+          varieties.map(variety => (
+            <div key={variety} className="flex items-center mb-3">
+              <label className="flex items-center cursor-pointer text-gray-600 hover:text-gray-800">
                 <input
                   type="checkbox"
                   checked={selectedVarieties.includes(variety)}
                   onChange={() => handleVarietyChange(variety)}
-                  className="mr-2"
+                  className="form-checkbox h-4 w-4 text-rose-950 mr-2"
                 />
-                {variety}
+                {capitalizeFirstLetter(variety)}
               </label>
             </div>
           ))
@@ -121,17 +143,38 @@ function Filters({ products, setFilteredProducts }) {
         )}
       </div>
 
-      {/* Slider para filtrar por precio máximo */}
       <div className="mb-4">
-        <h4 className="font-semibold mb-2">Precio Máximo: <span className="font-bold">${priceRange}</span></h4>
+        <h4 className="font-semibold mb-3 text-lg text-gray-700 border-b-2 border-rose-950 pb-1 uppercase tracking-wide">
+          Ordenar por Precio
+        </h4>
+
+        <h4 className="font-semibold mb-3 text-lg text-gray-700">
+          Precio Máximo: <span className="font-bold text-gray-800">${priceRange}</span>
+        </h4>
         <input
           type="range"
           min="0"
-          max="50000" // Valor máximo del filtro.
+          max="50000"
           value={priceRange}
           onChange={handlePriceChange}
-          className="w-full"
+          className="w-full appearance-none bg-gray-300 rounded-lg overflow-hidden focus:outline-none focus:ring-2 focus:ring-rose-950"
+          style={{ accentColor: '#7e1414' }}
         />
+        <div className="flex justify-between text-sm text-gray-500 mt-2">
+          <span>$0</span>
+          <span>$50,000</span>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <select
+          onChange={handleSortChange}
+          value={sortOrder}
+          className="w-full bg-gray-100 border border-gray-300 rounded-md p-2 mb-4"
+        >
+          <option value="asc">Menor a Mayor</option>
+          <option value="desc">Mayor a Menor</option>
+        </select>
       </div>
     </div>
   );

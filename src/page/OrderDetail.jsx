@@ -27,7 +27,7 @@ function OrderDetail() {
           <h2 className="text-2xl font-semibold">Orden de Compra</h2>
           <button
             onClick={() => window.history.back()} // Navegar hacia atrás
-            className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600"
+            className="bg-rose-950 text-white py-1 px-3 rounded hover:bg-rose-700"
           >
             Regresar
           </button>

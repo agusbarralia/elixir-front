@@ -18,10 +18,11 @@ function ProductList({ title }) {
     }
   }, [dispatch, products]);
 
-  // Ordenar productos por precio y seleccionar los 4 más baratos
-  const cheapestProducts = [...products]
+  // Filtrar productos con stock disponible y ordenar por precio
+  const productsInStock = products.filter(product => product.stock > 0);
+  const cheapestProducts = [...productsInStock]
     .sort((a, b) => a.price - b.price)
-    .slice(0, 4);
+    .slice(0, 6);
 
   return (
     <section className="p-6 bg-white rounded-lg shadow-md">
@@ -32,8 +33,8 @@ function ProductList({ title }) {
       {loading && <p className="text-center text-gray-600">Cargando productos...</p>}
       {error && <p className="text-center text-red-600">Error: {error}</p>}
 
-      {!loading && !error && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {!loading && !error && productsInStock.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
           {cheapestProducts.map((product) => (
             <ProductCard key={product.productId} product={product} />
           ))}
@@ -41,7 +42,7 @@ function ProductList({ title }) {
       )}
 
       {cheapestProducts.length === 0 && !loading && !error && (
-        <p className="text-center text-gray-600 mt-4">No hay productos disponibles.</p>
+        <p className="text-center text-gray-600 mt-4">No hay productos disponibles con stock.</p>
       )}
     </section>
   );

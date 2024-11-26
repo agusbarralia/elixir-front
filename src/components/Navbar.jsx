@@ -27,7 +27,7 @@ const Navbar = () => {
   }, [dispatch]);
 
   const handleLogout = () => {
-    dispatch(logoutUser()); // Disparar acción de cerrar sesión
+    dispatch(logoutUser());
     navigate("/login");
   };
 
@@ -40,7 +40,7 @@ const Navbar = () => {
   };
 
   const handleAdmin = () => {
-    navigate('/admin/products');
+    navigate("/admin/products");
   };
 
   // Condición para renderizar mientras se cargan las categorías
@@ -49,45 +49,71 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="flex justify-between items-center p-4 bg-gray-950 text-white relative">
-      <div className="text-xl font-bold">
-        <Link to={'/'}>Elixir</Link>
+    <nav className="relative flex items-center p-4 bg-rose-950 bg-opacity-100 text-white">
+      {/* Logo */}
+      <div className="flex items-center">
+        <Link to="/">
+          <img
+            src="/ElixirLogoWhite.png"
+            alt="Elixir Logo"
+            className="h-10 w-auto"
+          />
+        </Link>
       </div>
 
-      <div className="flex space-x-4 relative">
+      {/* Categorías centradas */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-8 text-lg font-semibold tracking-wide">
         {categories.map((category, index) => (
-          <div key={index} className="relative">
-            <button onClick={() => handleCategoryClick(category.name)} className="hover:text-gray-400">
-              {category.name}
-            </button>
-          </div>
+          <button
+            key={index}
+            onClick={() => handleCategoryClick(category.name)}
+            className="hover:text-gray-300 uppercase"
+          >
+            {category.name}
+          </button>
         ))}
       </div>
 
-      <div className="flex items-center space-x-2 relative">
+      {/* Opciones a la derecha */}
+      <div className="ml-auto flex items-center space-x-4">
         <SearchBar />
 
-        {role === "USER" && <button onClick={handleOrders}>Pedidos</button>}
+        {role === "USER" && (
+          <button onClick={handleOrders} className="hover:text-gray-300">
+            Pedidos
+          </button>
+        )}
 
         {role !== "ADMIN" ? (
-          <div className="flex flex-row items-center space-x-2">
-            <button className="text-lg" onClick={handleCartClick}>
+          <div className="flex items-center space-x-4">
+            <button onClick={handleCartClick} className="text-lg">
               🛒
             </button>
-            {isAuthenticated && <button onClick={handleUserPageClick}>Mis Datos</button>}
+            {isAuthenticated && (
+              <button onClick={handleUserPageClick} className="hover:text-gray-300">
+                Mis Datos
+              </button>
+            )}
           </div>
         ) : (
-          <a href="#" onClick={handleAdmin} className="hover:text-gray-400">
+          <a
+            href="#"
+            onClick={handleAdmin}
+            className="hover:text-gray-300"
+          >
             Administración
           </a>
         )}
 
         {isAuthenticated ? (
-          <button onClick={handleLogout} className="hover:text-gray-400">
+          <button
+            onClick={handleLogout}
+            className="text-white font-bold hover:text-red-600"
+          >
             Cerrar Sesión
           </button>
         ) : (
-          <a href="/login" className="hover:text-gray-400">
+          <a href="/login" className="font-bold hover:text-gray-300">
             Iniciar Sesión
           </a>
         )}
