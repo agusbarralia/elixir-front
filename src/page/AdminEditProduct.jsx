@@ -110,13 +110,6 @@ function AdminEditProduct() {
     formData.append("subCategoryId", product.subCategoryId);
     formData.append("categoryId", product.categoryId);
 
-    newImages.forEach((image) => {
-      formData.append("newImages", image);
-    });
-
-    removedImages.forEach((imageUrl) => {
-      formData.append("removedImages", imageUrl);
-    });
 
     try {
       const response = await fetch(`${urlEdit}`, {
