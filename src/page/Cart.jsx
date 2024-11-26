@@ -140,7 +140,7 @@ function Cart() {
             <p className="text-2xl mb-4">Subtotal: ${calculateSubtotal().toFixed(2)}</p>
             <button
               onClick={handleCheckoutClick}
-              className="bg-blue-500 text-white py-2 px-4 rounded w-full"
+              className="bg-rose-950 text-white py-2 px-4 rounded w-full hover:bg-rose-700"
             >
               Proceder al Pago
             </button>

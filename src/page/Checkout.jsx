@@ -68,9 +68,6 @@ function Checkout() {
     return <p>Procesando orden...</p>;
   }
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
 
   if (errorOrder) {
     return <p>Error: {error}</p>;
@@ -165,7 +162,7 @@ function Checkout() {
 
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+              className="w-full bg-rose-950 text-white py-2 px-4 rounded-lg hover:bg-rose-700"
             >
               Confirmar Pedido
             </button>

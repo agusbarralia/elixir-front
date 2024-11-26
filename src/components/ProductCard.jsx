@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchAddToCart } from "../redux/cartSlice"; // Asegúrate de ajustar la ruta si es necesario
+import { fetchAddToCart } from "../redux/cartSlice";
 
 const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
       return;
     }
     const productId = product.productId;
-    dispatch(fetchAddToCart({productId,quantity: 1, token}))
+    dispatch(fetchAddToCart({ productId, quantity: 1, token }))
       .unwrap()
       .then(() => {
         alert(`${product.name} agregado al carrito con éxito!`);
@@ -41,10 +41,10 @@ const ProductCard = ({ product }) => {
     discount > 0 ? (product.price * (1 - discount)).toFixed(2) : product.price;
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden transform transition-transform duration-200 hover:scale-105 w-64 h-auto">
+    <div className="bg-white shadow-md rounded-lg overflow-hidden transform transition-transform duration-200 hover:scale-105 w-64 flex flex-col h-full">
       <div
         onClick={() => navigate(`/product/${product.productId}`)}
-        className="cursor-pointer"
+        className="cursor-pointer flex-grow"
       >
         <img
           src={imageUrl}
@@ -62,9 +62,9 @@ const ProductCard = ({ product }) => {
               <p className="mt-1 text-gray-500 line-through">
                 ${product.price.toFixed(2)}
               </p>
-              <p className="mt-1 text-red-600 font-bold">
+              <p className="mt-1 text-black font-bold">
                 ${discountedPrice}{" "}
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-green-600">
                   ({discountPercentage.toFixed(0)}% OFF)
                 </span>
               </p>
@@ -76,16 +76,17 @@ const ProductCard = ({ product }) => {
           )}
         </div>
       </div>
+
       <div className="p-4">
         {product.stock > 0 ? (
           <button
-            className="w-full px-4 py-2 bg-red-600 text-white rounded transition duration-200 hover:bg-red-700"
+            className="w-full px-4 py-2 bg-rose-950 text-white rounded transition duration-200 hover:bg-red-700"
             onClick={addToCart}
           >
             Agregar al carrito
           </button>
         ) : (
-          <p className="text-center text-red-600 font-bold">No hay stock</p>
+          <p className="text-center text-rose-900 font-bold">No hay stock</p>
         )}
       </div>
     </div>

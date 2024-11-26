@@ -5,7 +5,13 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{wine:"#4C213B",},
+      fontFamily: {
+        display: ['"Playfair Display"', 'serif'], // Para títulos
+        body: ['"Lato"', 'sans-serif'],          // Para texto
+      },
+    },
   },
   plugins: [],
 }
